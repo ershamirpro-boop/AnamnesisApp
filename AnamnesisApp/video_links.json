@@ -1,0 +1,161 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "notes": "ניתן להחליף לסרטונים שלך. התאמת label 1:1."
+  },
+  "לב וכלי דם": [
+    {
+      "label": "האזנה ללב (קצב/אוושות)",
+      "urls": [
+        "https://www.youtube.com/results?search_query=cardiac+auscultation+osce"
+      ]
+    },
+    {
+      "label": "JVP ובצקות היקפיות",
+      "urls": [
+        "https://www.youtube.com/watch?v=Ez7KsKRi8e8"
+      ]
+    },
+    {
+      "label": "האזנה לריאות (קראקלס)",
+      "urls": [
+        "https://www.youtube.com/results?search_query=lung+auscultation+crackles"
+      ]
+    },
+    {
+      "label": "מישוש דופן חזה",
+      "urls": [
+        "https://www.youtube.com/results?search_query=chest+wall+palpation+examination"
+      ]
+    }
+  ],
+  "נשימה": [
+    {
+      "label": "סטורציה ו-RR",
+      "urls": [
+        "https://www.youtube.com/results?search_query=pulse+oximetry+respiratory+rate"
+      ]
+    },
+    {
+      "label": "האזנה - צפצופים/קראקלס",
+      "urls": [
+        "https://www.youtube.com/results?search_query=lung+auscultation+osce"
+      ]
+    },
+    {
+      "label": "POCUS לב/ריאות",
+      "urls": [
+        "https://www.youtube.com/results?search_query=lung+ultrasound+B+lines+pleural+effusion"
+      ]
+    }
+  ],
+  "מערכת עצבים": [
+    {
+      "label": "Dix-Hallpike",
+      "urls": [
+        "https://www.youtube.com/watch?v=D6qEdlFVxig",
+        "https://www.youtube.com/watch?v=Ey7TlLJUErY"
+      ]
+    },
+    {
+      "label": "בדיקת ניסטגמוס",
+      "urls": [
+        "https://www.youtube.com/results?search_query=nystagmus+examination+osce"
+      ]
+    },
+    {
+      "label": "בדיקה נוירולוגית ממוקדת/עצבי גולגולת",
+      "urls": [
+        "https://www.youtube.com/results?search_query=cranial+nerve+examination+osce"
+      ]
+    }
+  ],
+  "עיכול": [
+    {
+      "label": "מישוש בטן והערכת רגישות",
+      "urls": [
+        "https://www.youtube.com/results?search_query=abdominal+examination+palpation+osce"
+      ]
+    },
+    {
+      "label": "סימני גירוי צפקי וריבאונד",
+      "urls": [
+        "https://www.youtube.com/results?search_query=peritoneal+signs+rebound+guarding+exam"
+      ]
+    },
+    {
+      "label": "סימן מרפי",
+      "urls": [
+        "https://www.youtube.com/results?search_query=Murphy+sign+examination"
+      ]
+    }
+  ],
+  "שתן/גניטואורינרי": [
+    {
+      "label": "רגישות CVA",
+      "urls": [
+        "https://www.youtube.com/results?search_query=CVA+tenderness+exam"
+      ]
+    },
+    {
+      "label": "בדיקת אזור השופכה והפניס/פרינאום",
+      "urls": [
+        "https://www.youtube.com/results?search_query=male+genitourinary+exam+osce"
+      ]
+    }
+  ],
+  "א.א.ג": [
+    {
+      "label": "טמפונדה קדמית אם צריך",
+      "urls": [
+        "https://www.youtube.com/results?search_query=anterior+nasal+packing+epistaxis"
+      ]
+    },
+    {
+      "label": "בדיקה קדמית של אף/אוזן/לוע",
+      "urls": [
+        "https://www.youtube.com/results?search_query=ENT+anterior+rhinoscopy+otoscopy+oropharynx+exam"
+      ]
+    }
+  ],
+  "עור / טראומה": [
+    {
+      "label": "הערכת עור - מורפולוגיה והתפשטות",
+      "urls": [
+        "https://www.youtube.com/results?search_query=skin+examination+osce"
+      ]
+    },
+    {
+      "label": "בדיקת זיהום רקמות רכות (צלוליטיס/אבצס)",
+      "urls": [
+        "https://www.youtube.com/results?search_query=soft+tissue+infection+abscess+exam"
+      ]
+    },
+    {
+      "label": "הערכת פצע, גידים/עצבים/כלי דם ודפקים דיסטליים",
+      "urls": [
+        "https://www.youtube.com/results?search_query=dog+bite+wound+examination"
+      ]
+    }
+  ],
+  "עיניים": [
+    {
+      "label": "בדיקת חדות ראייה",
+      "urls": [
+        "https://www.youtube.com/results?search_query=visual+acuity+snellen+osce"
+      ]
+    },
+    {
+      "label": "שדות ראייה ותנועות עיניים",
+      "urls": [
+        "https://www.youtube.com/results?search_query=eye+movements+visual+fields+examination"
+      ]
+    },
+    {
+      "label": "הפיכת עפעף ופלואורסצאין",
+      "urls": [
+        "https://www.youtube.com/results?search_query=eyelid+eversion+fluorescein"
+      ]
+    }
+  ]
+}
