@@ -11,6 +11,51 @@ st.set_page_config(
     page_icon="🩺",
     layout="wide",
 )
+# -------- Theme & Responsive Style --------
+st.markdown("""
+<style>
+/* צבעים ונראות כללית */
+:root { --pri:#0f6fec; --bg:#f8fafc; --card:#ffffff; --muted:#475569; --text:#0f172a; }
+
+/* רקע כללי */
+html, body, .stApp { background: var(--bg) !important; color: var(--text) !important; }
+.block-container { padding-top: 1rem; padding-bottom: 1.5rem; }
+
+/* כותרות וטקסטים */
+h1, h2, h3, h4 { color:#0b1220 !important; letter-spacing:.2px; }
+p, li, span, label, .stMarkdown { color: var(--text) !important; font-size: 1rem; }
+
+/* כפתורים */
+div.stButton > button:first-child {
+  background: var(--pri); color:#fff; border:0; height:46px; border-radius: 10px;
+  font-weight:600; width:100%;
+}
+div.stButton > button:first-child:hover { filter: brightness(.95); }
+
+/* כרטיסים */
+.card {
+  background: var(--card);
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(15,23,42,.06);
+}
+
+/* קישורים */
+a, a:visited { color: var(--pri) !important; text-decoration: none; font-weight: 600; }
+a:hover { text-decoration: underline; }
+
+/* רספונסיבי - מובייל */
+@media (max-width: 640px) {
+  .block-container { padding-left: 8px; padding-right: 8px; }
+  h1 { font-size: 1.4rem; }
+  h2 { font-size: 1.15rem; }
+  h3 { font-size: 1rem; }
+  .card { padding: 12px; border-radius: 12px; }
+  div.stButton > button:first-child { height: 48px; font-size: 1rem; }
+}
+</style>
+""", unsafe_allow_html=True)
 
 # ---------- Paths ----------
 BASE_DIR = Path(__file__).parent
@@ -251,4 +296,5 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.caption("Smart Anamnesis Recommender - גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
+
 
