@@ -102,7 +102,7 @@ with st.sidebar:
     st.header("זיהוי")
     role = st.selectbox("תפקיד", ["סטודנט", "מתמחה", "רופא", "אחות", "אורח"], index=2)
     dept = st.text_input("מחלקה", "מלר\"ד")
-    age = st.number_input("גיל", min_value=0, max_value=120, value=40, step=1)
+    age = st.number_input(" גיל מטופל", min_value=0, max_value=120, value=40, step=1)
 
     st.caption("ניהול")
     colR1, colR2 = st.columns(2)
@@ -251,3 +251,4 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.caption("Smart Anamnesis Recommender - גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
+
