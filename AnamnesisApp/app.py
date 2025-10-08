@@ -15,78 +15,65 @@ st.set_page_config(
 # ---------- Unified, mobile-first styles (incl. Selectbox fix) ----------
 st.markdown("""
 <style>
-:root{--pri:#0f6fec;--bg:#f8fafc;--card:#ffffff;--muted:#475569;--text:#0f172a}
-
-/* בסיס נקי ובהיר */
-html,body,.stApp{background:var(--bg)!important;color:var(--text)!important}
-.block-container{padding-top:12px;padding-bottom:20px}
-
-/* סיידבר בהיר */
-[data-testid="stSidebar"]{background:#ffffff!important;color:var(--text)!important;border-right:1px solid #e5e7eb}
-[data-testid="stSidebar"] *{color:var(--text)!important}
-
-/* טיפוגרפיה */
-h1,h2,h3,h4{color:#0b1220!important;letter-spacing:.2px}
-p,li,span,label,.stMarkdown{color:var(--text)!important;font-size:1rem}
-
-/* כפתורים נוחים למגע */
-div.stButton>button:first-child{
-  background:var(--pri);color:#fff;border:0;height:48px;border-radius:10px;
-  font-weight:600;width:100%;box-shadow:0 1px 2px rgba(15,23,42,.15)
+:root {
+  --pri:#0f6fec; --bg:#f8fafc; --card:#ffffff; --muted:#475569; --text:#0f172a;
 }
-div.stButton>button:first-child:hover{filter:brightness(.95)}
 
-/* קישורים */
-a,a:visited{color:var(--pri)!important;text-decoration:none;font-weight:600}
-a:hover{text-decoration:underline}
+/* רקע כללי וניקיון */
+html, body, .stApp { background: var(--bg) !important; color: var(--text) !important; }
+.block-container { padding-top: 12px; padding-bottom: 20px; }
 
-/* כרטיסים */
-.card{background:var(--card);border:1px solid #e5e7eb;border-radius:14px;
-      padding:14px 16px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
-.pill{display:inline-block;padding:4px 10px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:.85rem;margin-left:6px}
-.hr{height:1px;background:#e5e7eb;border:0;margin:14px 0}
+/* כותרות וטיפוגרפיה */
+h1,h2,h3,h4 { color:#0b1220 !important; letter-spacing:.2px; }
+p, li, span, label, .stMarkdown { color: var(--text) !important; font-size: 1rem; }
 
-/* ==== Selectbox / Dropdown – כפייה לרקע בהיר וטקסט כהה ==== */
-/* התיבה עצמה */
-.stSelectbox [data-baseweb="select"],
-.stSelectbox [data-baseweb="select"] *{
-  background-color:#ffffff!important;color:#0f172a!important;border-radius:10px!important;
-  border:1px solid #e5e7eb!important;min-height:44px
+/* כפתורים */
+div.stButton > button:first-child {
+  background: var(--pri); color:#fff; border:0; height:46px; border-radius: 10px;
+  font-weight:600; width:100%;
 }
-/* value */
-.stSelectbox [data-baseweb="select"] [data-baseweb="value-container"],
-.stSelectbox [data-baseweb="select"] [data-baseweb="single-value"]{color:#0f172a!important}
-/* ה-portal של התפריט */
-.stApp [data-baseweb="popover"], .stApp [data-baseweb="menu"], .stApp [data-baseweb="menu"] *{
-  background-color:#ffffff!important;color:#0f172a!important;border-color:#e5e7eb!important
+div.stButton > button:first-child:hover { filter: brightness(.95); }
+
+/* --- dropdown כהה עם טקסט לבן --- */
+.stSelectbox [data-baseweb="select"] {
+  background-color: #1e293b !important;  /* רקע כהה */
+  color: #ffffff !important;              /* טקסט לבן */
+  border: 1px solid #334155 !important;
+  border-radius: 10px !important;
+  min-height: 44px;
 }
-/* פריטים, hover ונבחר */
-.stApp [data-baseweb="menu"] [role="option"]{background:#ffffff!important;color:#0f172a!important}
+.stSelectbox [data-baseweb="select"] * {
+  color: #ffffff !important;
+}
+.stApp [data-baseweb="popover"],
+.stApp [data-baseweb="menu"],
+.stApp [data-baseweb="menu"] * {
+  background-color: #1e293b !important;
+  color: #ffffff !important;
+  border: 1px solid #334155 !important;
+}
 .stApp [data-baseweb="menu"] [role="option"]:hover,
-.stApp [data-baseweb="menu"] [role="option"][aria-selected="true"]{background:#f0f6ff!important;color:#0f172a!important}
-/* חץ */
-.stSelectbox svg{fill:#0f172a!important;color:#0f172a!important}
-
-/* קלטים כלליים */
-input,textarea,select{
-  color:var(--text)!important;background:#ffffff!important;border:1px solid #e5e7eb!important;
-  border-radius:10px!important;min-height:44px
+.stApp [data-baseweb="menu"] [role="option"][aria-selected="true"] {
+  background-color: #334155 !important;
+  color: #ffffff !important;
 }
 
-/* --- רספונסיבי: מובייל --- */
-/* מערם עמודות אנכית במסכים צרים */
-@media (max-width:820px){
-  [data-testid="stHorizontalBlock"]{flex-direction:column!important;gap:0!important}
-  [data-testid="column"]{width:100%!important}
-  .block-container{padding-left:8px;padding-right:8px}
-  h1{font-size:1.5rem} h2{font-size:1.2rem} h3{font-size:1.05rem}
-  .card{padding:12px;border-radius:12px}
-  div.stButton>button:first-child{height:50px;font-size:1rem}
-  .stMarkdown{word-wrap:break-word;overflow-wrap:anywhere}
+/* חץ לבן */
+.stSelectbox svg { fill: #ffffff !important; color: #ffffff !important; }
+
+/* רספונסיבי - מובייל */
+@media (max-width: 820px) {
+  [data-testid="stHorizontalBlock"] { flex-direction: column !important; gap: 0 !important; }
+  [data-testid="column"] { width: 100% !important; }
+  .block-container { padding-left: 8px; padding-right: 8px; }
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.2rem; }
+  h3 { font-size: 1.05rem; }
+  .card { padding: 12px; border-radius: 12px; }
+  div.stButton > button:first-child { height: 50px; font-size: 1rem; }
 }
 </style>
 """, unsafe_allow_html=True)
-
 # ---------- Paths ----------
 BASE_DIR = Path(__file__).parent
 DATA_PATH = BASE_DIR / "knowledge.json"
@@ -299,4 +286,5 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.caption("נכתב עי לירן שחר Smart Anamnesis Recommender - גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
+
 
