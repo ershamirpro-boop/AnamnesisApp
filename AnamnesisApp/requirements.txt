@@ -1,1 +1,8 @@
 streamlit==1.38.0
+pandas
+gspread
+google-auth
+google-auth-oauthlib
+rapidfuzz
+phonenumbers
+
