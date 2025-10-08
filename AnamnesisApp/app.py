@@ -11,6 +11,28 @@ st.set_page_config(
     page_icon="🩺",
     layout="wide",
 )
+st.markdown("""
+<style>
+/* תפריט הבחירה (Dropdown) */
+.stSelectbox [data-baseweb="select"] {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-radius: 8px !important;
+}
+
+/* טקסט בתפריט הנפתח */
+.stSelectbox [data-baseweb="popover"] * {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+}
+
+/* הדגשה באפשרות נבחרת */
+.stSelectbox [data-baseweb="option"]:hover {
+    background-color: #f0f6ff !important;
+    color: #0f172a !important;
+}
+</style>
+""", unsafe_allow_html=True)
 # -------- Theme & Responsive Style --------
 st.markdown("""
 <style>
@@ -296,5 +318,6 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.caption("Smart Anamnesis Recommender - גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
+
 
 
