@@ -15,30 +15,52 @@ st.set_page_config(
 # ---------- Unified, mobile-first styles (incl. Selectbox fix) ----------
 st.markdown("""
 <style>
-/* תיבת הבחירה עצמה */
-.stSelectbox [data-baseweb="select"],
-.stSelectbox [data-baseweb="select"] *{
-  background:#ffffff !important; color:#0f172a !important;
-  border:1px solid #e5e7eb !important; border-radius:10px !important; min-height:44px;
-}
-.stSelectbox svg{fill:#0f172a!important;color:#0f172a!important}
-
-/* התפריט הנפתח – תופס גם את ה-portal */
-html body [data-baseweb="popover"],
-html body [data-baseweb="menu"],
-html body [data-baseweb="menu"] *{
-  background:#ffffff !important; color:#0f172a !important; border-color:#e5e7eb !important;
-}
-html body [data-baseweb="menu"] [role="option"]:hover,
-html body [data-baseweb="menu"] [role="option"][aria-selected="true"]{
-  background:#f0f6ff !important; color:#0f172a !important;
+/* ====== Radio כ"כרטיס" – כל השורה לחיצה, בלי ריבועים בתוך ריבועים ====== */
+.stRadio div[role="radiogroup"]{
+  display:grid; gap:10px; margin-top:6px;
 }
 
-/* סיידבר כהה – טקסט לבן */
-[data-testid="stSidebar"]{ background:#0f172a !important; border-right:1px solid #334155; }
-[data-testid="stSidebar"] *{ color:#e5e7eb !important; }
-[data-testid="stSidebar"] input, [data-testid="stSidebar"] textarea{
-  background:#111827 !important; color:#fff !important; border:1px solid #334155 !important; border-radius:10px !important;
+/* מסתיר את עיגול הרדיו עצמו */
+.stRadio div[role="radiogroup"] input[type="radio"]{
+  display:none !important;
+}
+
+/* הכרטיס (label) – כל השורה לחיצה */
+.stRadio div[role="radiogroup"] > label{
+  width:100%;
+  display:flex; align-items:center; gap:10px;
+  padding:12px 14px;
+  background:#ffffff;
+  color:#0f172a;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  cursor:pointer;
+  transition:all .12s ease-in-out;
+}
+
+/* ריחוף */
+.stRadio div[role="radiogroup"] > label:hover{
+  background:#f8fafc;
+  border-color:#cbd5e1;
+}
+
+/* מצב נבחר – משתמשים ב-aria-checked שמציב סטריםליט על ה-label */
+.stRadio div[role="radiogroup"] > label[aria-checked="true"]{
+  background:#eef4ff;
+  border-color:#0f6fec;
+  box-shadow:0 0 0 3px rgba(15,111,236,.12);
+  color:#0b1220;
+}
+
+/* טקסט ארוך – שבירה נקייה */
+.stRadio div[role="radiogroup"] > label span{
+  white-space:normal !important;
+  line-height:1.35;
+}
+
+/* מובייל – יותר מרווח לחיצה */
+@media (max-width:820px){
+  .stRadio div[role="radiogroup"] > label{ padding:14px 16px; }
 }
 </style>
 """, unsafe_allow_html=True)
@@ -254,6 +276,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.caption("נכתב עי לירן שחר Smart Anamnesis Recommender - גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
+
 
 
 
