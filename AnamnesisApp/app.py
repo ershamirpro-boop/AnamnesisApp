@@ -9,9 +9,22 @@ DATA_PATH = BASE_DIR / "knowledge.json"
 VIDEO_PATHS = [BASE_DIR / "video_links.json", BASE_DIR / "anamnesis_video_links.json"]
 
 @st.cache_data(ttl=0)
-def load_json(path: Path) -> Dict:
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+def load_json_safe(path: Path):
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        st.warning(f"⚠️ לא נמצא הקובץ: {path.name}")
+        return {}
+    except json.JSONDecodeError as e:
+        st.error(f"❌ JSON לא תקין בקובץ {path.name}: {e}")
+        return {}
+
+def try_load_video_links() -> Dict[str, List[Dict[str, List[str]]]]:
+    for p in VIDEO_PATHS:
+        if p.exists():
+            return load_json_safe(p) or {}
+    return {}
 
 def try_load_video_links() -> Dict[str, List[Dict[str, List[str]]]]:
     for p in VIDEO_PATHS:
@@ -133,7 +146,9 @@ def main():
         st.error("לא נמצא knowledge.json. ודא שהקובץ נמצא באותה תיקיה כמו app.py")
         st.stop()
 
-    data = load_json(DATA_PATH)
+    data = load_json_safe(DATA_PATH)
+if not data:
+    st.stop()
     identity = role_gate()
     st.caption(f"תפקיד: {identity['role']} | מחלקה: {identity['department']} | גיל: {identity['age']}")
 
@@ -173,4 +188,5 @@ def main():
     render_scores(rec.get("scores", []))
 
 if __name__ == "__main__":
+
     main()
