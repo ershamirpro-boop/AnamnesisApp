@@ -298,4 +298,5 @@ render_scores(rec.get("scores", []))
 st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
-st.caption("נכתב ע"י לירן שחר Smart Anamnesis Recommender - גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
+st.caption("נכתב עי לירן שחר Smart Anamnesis Recommender - גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
+
