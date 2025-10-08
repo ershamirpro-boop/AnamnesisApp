@@ -15,74 +15,30 @@ st.set_page_config(
 # ---------- Unified, mobile-first styles (incl. Selectbox fix) ----------
 st.markdown("""
 <style>
-:root{
-  --pri:#0f6fec; --bg:#f8fafc; --card:#ffffff; --text:#0f172a;
-  --dark:#0f172a; --dark-2:#111827; --dark-3:#1f2937; --dark-4:#334155; --light:#ffffff;
-}
-
-/* רקע כללי */
-html,body,.stApp{background:var(--bg)!important;color:var(--text)!important}
-.block-container{padding-top:12px;padding-bottom:20px}
-
-/* כותרות וטיפוגרפיה */
-h1,h2,h3,h4{color:#0b1220!important;letter-spacing:.2px}
-p,li,span,label,.stMarkdown{color:var(--text)!important;font-size:1rem}
-
-/* כפתורים */
-div.stButton>button:first-child{
-  background:var(--pri);color:#fff;border:0;height:48px;border-radius:10px;
-  font-weight:600;width:100%;box-shadow:0 1px 2px rgba(15,23,42,.15)
-}
-div.stButton>button:first-child:hover{filter:brightness(.95)}
-
-/* ===== סיידבר כהה עם טקסט לבן ===== */
-[data-testid="stSidebar"]{
-  background:var(--dark-2)!important;border-right:1px solid var(--dark-4)
-}
-[data-testid="stSidebar"] *{color:#e5e7eb!important}
-
-/* קלטים בסיידבר */
-[data-testid="stSidebar"] input, [data-testid="stSidebar"] textarea{
-  background:var(--dark-3)!important;color:#fff!important;border:1px solid var(--dark-4)!important;border-radius:10px!important;min-height:44px
-}
-[data-testid="stSidebar"] .stNumberInput input{background:var(--dark-3)!important;color:#fff!important}
-[data-testid="stSidebar"] .stNumberInput button{background:var(--dark-4)!important;color:#fff!important;border:0}
-
-/* ===== Selectbox כהה עם טקסט לבן (גם במיין וגם בסיידבר) ===== */
-/* התיבה עצמה */
+/* תיבת הבחירה עצמה */
 .stSelectbox [data-baseweb="select"],
 .stSelectbox [data-baseweb="select"] *{
-  background:var(--dark-2)!important;color:#fff!important;border:1px solid var(--dark-4)!important;border-radius:10px!important;min-height:44px
+  background:#ffffff !important; color:#0f172a !important;
+  border:1px solid #e5e7eb !important; border-radius:10px !important; min-height:44px;
 }
-/* value/placeholder */
-.stSelectbox [data-baseweb="single-value"], .stSelectbox [data-baseweb="placeholder"]{color:#fff!important;opacity:1!important}
-/* חץ */
-.stSelectbox svg{fill:#fff!important;color:#fff!important}
+.stSelectbox svg{fill:#0f172a!important;color:#0f172a!important}
 
-/* ===== התפריט הנפתח – ה-portal מחוץ לעץ ===== */
-body [data-baseweb="popover"], body [data-baseweb="menu"], body [data-baseweb="menu"] *{
-  background:var(--dark-2)!important;color:#fff!important;border-color:var(--dark-4)!important
+/* התפריט הנפתח – תופס גם את ה-portal */
+html body [data-baseweb="popover"],
+html body [data-baseweb="menu"],
+html body [data-baseweb="menu"] *{
+  background:#ffffff !important; color:#0f172a !important; border-color:#e5e7eb !important;
 }
-body [data-baseweb="menu"] [role="option"]{background:var(--dark-2)!important;color:#fff!important}
-body [data-baseweb="menu"] [role="option"]:hover,
-body [data-baseweb="menu"] [role="option"][aria-selected="true"]{
-  background:var(--dark-3)!important;color:#fff!important
+html body [data-baseweb="menu"] [role="option"]:hover,
+html body [data-baseweb="menu"] [role="option"][aria-selected="true"]{
+  background:#f0f6ff !important; color:#0f172a !important;
 }
 
-/* קישורים וכרטיסים */
-a,a:visited{color:var(--pri)!important;text-decoration:none;font-weight:600}
-a:hover{text-decoration:underline}
-.card{background:var(--card);border:1px solid #e5e7eb;border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
-.hr{height:1px;background:#e5e7eb;border:0;margin:14px 0}
-
-/* רספונסיבי – מובייל: לערום עמודות */
-@media (max-width:820px){
-  [data-testid="stHorizontalBlock"]{flex-direction:column!important;gap:0!important}
-  [data-testid="column"]{width:100%!important}
-  .block-container{padding-left:8px;padding-right:8px}
-  h1{font-size:1.5rem} h2{font-size:1.2rem} h3{font-size:1.05rem}
-  .card{padding:12px;border-radius:12px}
-  div.stButton>button:first-child{height:50px;font-size:1rem}
+/* סיידבר כהה – טקסט לבן */
+[data-testid="stSidebar"]{ background:#0f172a !important; border-right:1px solid #334155; }
+[data-testid="stSidebar"] *{ color:#e5e7eb !important; }
+[data-testid="stSidebar"] input, [data-testid="stSidebar"] textarea{
+  background:#111827 !important; color:#fff !important; border:1px solid #334155 !important; border-radius:10px !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -298,6 +254,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.caption("נכתב עי לירן שחר Smart Anamnesis Recommender - גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
+
 
 
 
