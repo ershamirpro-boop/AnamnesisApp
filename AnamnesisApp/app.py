@@ -270,11 +270,11 @@ def render_list_with_links(items: Any, title: str) -> None:
                 st.markdown(f"- {str(item)}")
 
 def render_scores(scores: Any) -> None:
-    st.markdown("### 📊 scorים רלוונטיים")
+    st.markdown("### 📊 scores רלוונטיים")
     box = st.container()
     with box:
         if not scores:
-            st.write("- אין scorים מוגדרים")
+            st.write("- אין scores מוגדרים")
             return
         for s in scores:
             name = s.get("name", str(s))
@@ -327,4 +327,5 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.caption("נכתב עי לירן שחר • Smart Anamnesis Recommender • גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
+
 
