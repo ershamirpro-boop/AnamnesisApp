@@ -300,7 +300,7 @@ with st.expander("📚 מבט מהיר על הידע (מערכות ותלונו�
         if sys_name in gen_map:
             st.caption("כולל בלוק כללי ('אחר') למערכת זו.")
     st.divider()
-    st.caption("טיפ: אם תרצה, אוכל להוסיף כאן כפתור להורדה כ-CSV של המיפוי.")
+   
 # ---------- System and complaint selection ----------
 systems = sorted(set(list(data.get("systems", {}).keys()) + list(data.get("generic_by_system", {}).keys())))
 if not systems:
@@ -424,6 +424,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.caption("נכתב עי לירן שחר • Smart Anamnesis Recommender • גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
+
 
 
 
