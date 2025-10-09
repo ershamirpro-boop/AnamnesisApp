@@ -12,7 +12,7 @@ st.set_page_config(
     layout="wide",
 )
 
-# ---------- Unified, mobile-first styles (incl. Selectbox fix) ----------
+# ---------- Unified, mobile-first styles (RTL + cards + selectbox tweaks) ----------
 st.markdown("""
 <style>
 :root{
@@ -33,14 +33,14 @@ a:hover{text-decoration:underline}
 .card{ background:var(--card); border:1px solid #1f2937; border-radius:14px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.25) }
 .hr{ height:1px; background:#1f2937; border:0; margin:14px 0 }
 
-/* כפתורים */
+/* כפתורים כלליים */
 div.stButton>button:first-child{
   background:var(--pri); color:#fff; border:0; height:48px; border-radius:10px;
   font-weight:600; width:100%; box-shadow:0 1px 2px rgba(15,23,42,.25)
 }
 div.stButton>button:first-child:hover{ filter:brightness(.95) }
 
-/* ===== Selectbox/dropdown – טקסט כהה על רקע בהיר בתוך תפריט שחור של סטריםליט ===== */
+/* ===== Selectbox/dropdown – תאימות לנושא כהה ===== */
 .stSelectbox [data-baseweb="select"]{
   background:#111827 !important; color:#e5e7eb !important; border-radius:10px !important; border:1px solid #334155 !important;
 }
@@ -52,7 +52,7 @@ div.stButton>button:first-child:hover{ filter:brightness(.95) }
 .stSelectbox [data-baseweb="option"]:hover{ background:#0f172a !important; }
 .stSelectbox [data-baseweb="option"][aria-selected="true"]{ background:#0a1f3d !important; color:#fff !important; }
 
-/* ===== Radio כ"כרטיס" – כל הרובריקה לחיצה, בלי ריבועים בתוך ריבועים ===== */
+/* ===== Radio כ"כרטיס" – כל הרובריקה לחיצה (אם תשתמש בעתיד) ===== */
 .stRadio div[role="radiogroup"]{ display:grid; gap:10px; margin-top:6px; }
 .stRadio div[role="radiogroup"] input[type="radio"]{ display:none !important; }
 .stRadio div[role="radiogroup"] > label{
@@ -78,6 +78,10 @@ div.stButton>button:first-child:hover{ filter:brightness(.95) }
 }
 </style>
 """, unsafe_allow_html=True)
+
+# הסתרת הסיידבר לגמרי
+st.markdown("<style>[data-testid='stSidebar']{display:none}</style>", unsafe_allow_html=True)
+
 # ---------- Paths ----------
 BASE_DIR = Path(__file__).parent
 DATA_PATH = BASE_DIR / "knowledge.json"
@@ -136,28 +140,21 @@ def compose_entry(data: Dict[str, Any], system: str, complaint: str) -> Dict[str
         }
     return systems.get(system, {}).get(complaint, {})
 
-# ---------- Sidebar - identity + actions ----------
-with st.sidebar:
-    st.header("זיהוי")
-    role = st.selectbox("תפקיד", ["סטודנט", "מתמחה", "רופא", "אחות", "אורח"], index=2)
-    dept = st.text_input("מחלקה", "מלר\"ד")
-    age = st.number_input(" גיל מטופל", min_value=0, max_value=120, value=40, step=1)
-
-    st.caption("ניהול")
-    colR1, colR2 = st.columns(2)
-    with colR1:
-        if st.button("רענון תוכן"):
-            load_json_safe.clear()
-            st.experimental_rerun()
-    with colR2:
-        if st.button("איפוס מסך"):
-            st.experimental_set_query_params()
-            load_json_safe.clear()
-            st.experimental_rerun()
-
 # ---------- Header ----------
 st.title("🩺 Smart Anamnesis Recommender")
-st.caption(f"תפקיד: {role} | מחלקה: {dept} |  גיל מטופל: {age}")
+
+# כפתורי ניהול בראש הדף (במקום הסיידבר)
+top_c1, top_c2 = st.columns([1, 1])
+with top_c1:
+    if st.button("רענון תוכן"):
+        load_json_safe.clear()
+        st.experimental_rerun()
+with top_c2:
+    if st.button("איפוס מסך"):
+        st.experimental_set_query_params()
+        load_json_safe.clear()
+        st.experimental_rerun()
+
 st.markdown("<div class='hr'></div>", unsafe_allow_html=True)
 
 # ---------- Load data ----------
@@ -290,9 +287,3 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.caption("נכתב עי לירן שחר Smart Anamnesis Recommender - גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
-
-
-
-
-
-
