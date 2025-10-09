@@ -15,24 +15,23 @@ st.set_page_config(
 # ---------- Unified, mobile-first styles (Light/Dark + Selectbox fix + RTL) ----------
 st.markdown("""
 <style>
-/* ---------------- Theme tokens ---------------- */
+/* ---------------- Theme tokens (Light default) ---------------- */
 :root{
-  /* Light defaults */
   --pri:#0f6fec;
   --bg:#ffffff; --card:#ffffff; --text:#0f172a; --muted:#475569; --border:#e5e7eb;
 }
 
-/* Respect Streamlit's theme (Settings → Light/Dark) */
-html[data-theme="light"], body[data-theme="light"], .stApp[data-theme="light"]{
+/* Streamlit theme hook — this is the correct selector */
+.stApp[data-base-theme="light"]{
   --bg:#ffffff; --card:#ffffff; --text:#0f172a; --muted:#475569; --border:#e5e7eb;
 }
-html[data-theme="dark"], body[data-theme="dark"], .stApp[data-theme="dark"]{
+.stApp[data-base-theme="dark"]{
   --bg:#0b1220; --card:#0f172a; --text:#e5e7eb; --muted:#94a3b8; --border:#334155;
 }
 
-/* Fallback: if no data-theme is present, follow OS preference */
+/* Fallback אם משום מה אין attribute (נדיר) – עקוב אחרי העדפת מערכת */
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme]){
+  .stApp:not([data-base-theme]){ 
     --bg:#0b1220; --card:#0f172a; --text:#e5e7eb; --muted:#94a3b8; --border:#334155;
   }
 }
@@ -43,7 +42,13 @@ html, body, .stApp{
   background: var(--bg) !important;
   color: var(--text) !important;
 }
-.block-container{ padding-top:12px; padding-bottom:20px; }
+
+/* ודא שגם הקונטיינר הראשי מקבל רקע נכון */
+.block-container{ 
+  background: var(--bg) !important;
+  padding-top:12px; padding-bottom:20px; 
+}
+
 h1,h2,h3,h4{ color:var(--text) !important; letter-spacing:.2px; text-align:right; }
 p,li,span,label,.stMarkdown{ color:var(--text) !important; text-align:right; }
 
@@ -67,7 +72,7 @@ a:hover{text-decoration:underline}
 }
 .topbar-btn button:hover{ filter:brightness(.95) }
 
-/* Selectbox / dropdown – works in both themes */
+/* Selectbox / dropdown – עובדת בשני המצבים */
 .stSelectbox [data-baseweb="select"]{
   background:var(--card) !important; color:var(--text) !important; border-radius:10px !important; border:1px solid var(--border) !important;
 }
@@ -329,6 +334,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.caption("נכתב עי לירן שחר • Smart Anamnesis Recommender • גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
+
 
 
 
