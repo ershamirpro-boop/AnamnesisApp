@@ -168,7 +168,75 @@ def compose_entry(data: Dict[str, Any], system: str, complaint: str) -> Dict[str
             "notes": base.get("notes", []),
         }
     return systems.get(system, {}).get(complaint, {})
+def validate_knowledge(data: Dict[str, Any]) -> list[str]:
+    """
+    בודקת שהמבנה של knowledge.json תקין. מחזירה רשימת בעיות (אם ריק – תקין).
+    """
+    issues: list[str] = []
+    if not isinstance(data, dict):
+        return ["הקובץ העליון חייב להיות אובייקט JSON (dict)."]
 
+    # שדות-על אופציונליים
+    if "metadata" in data and not isinstance(data["metadata"], dict):
+        issues.append("'metadata' צריך להיות אובייקט (dict).")
+
+    # שדות-על נדרשים להפעלה
+    for key in ("systems", "generic_by_system"):
+        if key not in data:
+            issues.append(f"חסר מפתח עליון '{key}'. מומלץ להוסיף: \"{key}\": {{}}")
+        elif not isinstance(data[key], dict):
+            issues.append(f"'{key}' חייב להיות אובייקט (dict).")
+
+    # systems[מערכת][תלונה] -> dict של רשימות
+    sys_map = data.get("systems", {})
+    if isinstance(sys_map, dict):
+        for sys_name, comp_map in sys_map.items():
+            if not isinstance(comp_map, dict):
+                issues.append(f"'systems.{sys_name}' חייב להיות אובייקט של תלונות (dict).")
+                continue
+            for complaint, block in comp_map.items():
+                _check_block(issues, f"systems.{sys_name}.{complaint}", block)
+
+    # generic_by_system[מערכת] -> dict של רשימות
+    gen_map = data.get("generic_by_system", {})
+    if isinstance(gen_map, dict):
+        for sys_name, block in gen_map.items():
+            _check_block(issues, f"generic_by_system.{sys_name}", block)
+
+    return issues
+
+
+def _check_block(issues: list[str], path: str, block: Any) -> None:
+    """בדיקת בלוק המלצות: questions / physical_exam / labs / imaging / scores / notes."""
+    if not isinstance(block, dict):
+        issues.append(f"'{path}' חייב להיות אובייקט (dict) של רשימות.")
+        return
+
+    # כל אלה אופציונליים – אך אם קיימים חייבים להיות רשימות
+    for fld in ("questions", "physical_exam", "labs", "imaging", "scores", "notes"):
+        if fld in block and not isinstance(block[fld], list):
+            issues.append(f"'{path}.{fld}' חייב להיות רשימה (list).")
+
+    # תכולה פנימית מומלצת
+    if isinstance(block.get("physical_exam"), list):
+        for i, it in enumerate(block["physical_exam"]):
+            if not (isinstance(it, dict) and "label" in it):
+                issues.append(f"'{path}.physical_exam[{i}]' חייב להיות dict עם 'label' (ו-'url' אופציונלי).")
+
+    if isinstance(block.get("labs"), list):
+        for i, it in enumerate(block["labs"]):
+            if not (isinstance(it, dict) and "test" in it):
+                issues.append(f"'{path}.labs[{i}]' חייב להיות dict עם 'test' (+ 'why'/'when' אופציונליים).")
+
+    if isinstance(block.get("imaging"), list):
+        for i, it in enumerate(block["imaging"]):
+            if not (isinstance(it, dict) and "modality" in it):
+                issues.append(f"'{path}.imaging[{i}]' חייב להיות dict עם 'modality' (+ 'trigger' אופציונלי).")
+
+    if isinstance(block.get("scores"), list):
+        for i, it in enumerate(block["scores"]):
+            if not isinstance(it, dict) or "name" not in it:
+                issues.append(f"'{path}.scores[{i}]' מומלץ להיות dict עם 'name' (+ 'about'/'rule_in'/'rule_out'/'ref' אופציונליים).")
 # ---------- Top bar controls (instead of sidebar) ----------
 top_left, top_right = st.columns(2)
 with top_left:
@@ -209,6 +277,30 @@ data = load_json_safe(DATA_PATH)
 if not data:
     st.stop()
 
+issues = validate_knowledge(data)
+if issues:
+    with st.expander("⚠️ נמצאו הערות/בעיות במבנה הקובץ (לחץ להצגה)"):
+        for i, msg in enumerate(issues, start=1):
+            st.markdown(f"{i}. {msg}")
+# ===== הדבק כאן את בלוק "מבט מהיר על הידע" =====
+with st.expander("📚 מבט מהיר על הידע (מערכות ותלונות)"):
+    sys_map = data.get("systems", {})
+    gen_map = data.get("generic_by_system", {})
+    total_systems = len(set(sys_map.keys()) | set(gen_map.keys()))
+    st.caption(f"נמצאו {total_systems} מערכות | {sum(len(v) for v in sys_map.values())} תלונות ספציפיות | {len(gen_map)} מערכות עם 'אחר' כללי")
+
+    for sys_name in sorted(set(sys_map.keys()) | set(gen_map.keys())):
+        complaints = sorted(list(sys_map.get(sys_name, {}).keys()))
+        st.markdown(f"#### • {sys_name}")
+        if complaints:
+            st.markdown("תלונות ספציפיות:")
+            st.write(", ".join(complaints))
+        else:
+            st.write("אין תלונות ספציפיות בקובץ למערכת זו.")
+        if sys_name in gen_map:
+            st.caption("כולל בלוק כללי ('אחר') למערכת זו.")
+    st.divider()
+    st.caption("טיפ: אם תרצה, אוכל להוסיף כאן כפתור להורדה כ-CSV של המיפוי.")
 # ---------- System and complaint selection ----------
 systems = sorted(set(list(data.get("systems", {}).keys()) + list(data.get("generic_by_system", {}).keys())))
 if not systems:
@@ -332,6 +424,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.caption("נכתב עי לירן שחר • Smart Anamnesis Recommender • גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
+
 
 
 
