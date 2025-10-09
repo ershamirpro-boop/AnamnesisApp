@@ -15,103 +15,100 @@ st.set_page_config(
 # ---------- Unified, mobile-first styles (Light/Dark + Selectbox fix + RTL) ----------
 st.markdown("""
 <style>
-/* ---------------- Theme tokens (Light default) ---------------- */
-:root{
-  --pri:#0f6fec;
-  --bg:#ffffff; --card:#ffffff; --text:#0f172a; --muted:#475569; --border:#e5e7eb;
-}
+/* ===== RTL בסיסי ===== */
+.stApp { direction: rtl; }
+.block-container{ padding-top:12px; padding-bottom:20px; }
+h1,h2,h3,h4{ letter-spacing:.2px; text-align:right; }
+p,li,span,label,.stMarkdown{ text-align:right; }
 
-/* Streamlit theme hook — this is the correct selector */
-.stApp[data-base-theme="light"]{
-  --bg:#ffffff; --card:#ffffff; --text:#0f172a; --muted:#475569; --border:#e5e7eb;
-}
-.stApp[data-base-theme="dark"]{
-  --bg:#0b1220; --card:#0f172a; --text:#e5e7eb; --muted:#94a3b8; --border:#334155;
-}
+/* ===== קישורים ===== */
+a,a:visited{ color:inherit; text-decoration:none; font-weight:600; }
+a:hover{ text-decoration:underline; }
 
-/* Fallback אם משום מה אין attribute (נדיר) – עקוב אחרי העדפת מערכת */
+/* ===== כרטיסים (לא נוגעים ברקע העמוד!) ===== */
+.card{
+  background: rgba(255,255,255,.84);          /* ברירת מחדל נעימה ל-Light */
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 14px; padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+/* Dark mode tweaks */
 @media (prefers-color-scheme: dark){
-  .stApp:not([data-base-theme]){ 
-    --bg:#0b1220; --card:#0f172a; --text:#e5e7eb; --muted:#94a3b8; --border:#334155;
+  .card{
+    background: rgba(17,24,39,.85);           /* #111827 שקוף מעט */
+    border: 1px solid rgba(255,255,255,.12);
+    box-shadow: 0 1px 3px rgba(0,0,0,.35);
   }
 }
 
-/* ---------------- Base + RTL ---------------- */
-html, body, .stApp{
-  direction: rtl;
-  background: var(--bg) !important;
-  color: var(--text) !important;
-}
-
-/* ודא שגם הקונטיינר הראשי מקבל רקע נכון */
-.block-container{ 
-  background: var(--bg) !important;
-  padding-top:12px; padding-bottom:20px; 
-}
-
-h1,h2,h3,h4{ color:var(--text) !important; letter-spacing:.2px; text-align:right; }
-p,li,span,label,.stMarkdown{ color:var(--text) !important; text-align:right; }
-
-/* Links */
-a,a:visited{ color:#2563eb !important; font-weight:600; text-decoration:none }
-a:hover{text-decoration:underline}
-
-/* Cards + divider */
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:14px; padding:14px 16px;
-  box-shadow:0 1px 3px rgba(0,0,0,.08);
-}
-.hr{ height:1px; background:var(--border); border:0; margin:14px 0 }
-
-/* Top buttons */
+/* ===== כפתורי הפעולות למעלה (רענון/איפוס) – מראה עקבי בשני המצבים ===== */
 .topbar-btn button{
-  background:var(--pri) !important; color:#fff !important; border:0 !important; height:48px !important; border-radius:10px !important;
-  font-weight:600 !important; width:100% !important; box-shadow:0 1px 2px rgba(15,23,42,.15) !important;
+  background: #0f6fec !important;
+  color:#fff !important; border:0 !important; height:48px !important;
+  border-radius:10px !important; font-weight:600 !important; width:100% !important;
+  box-shadow:0 1px 2px rgba(0,0,0,.15) !important;
 }
-.topbar-btn button:hover{ filter:brightness(.95) }
+.topbar-btn button:hover{ filter:brightness(.95); }
 
-/* Selectbox / dropdown – עובדת בשני המצבים */
+/* ===== Selectbox / dropdown =====
+   לא כופים צבעים מוחלטים – נאחזים ב-inherit כדי לקבל את צבעי התֵמה הנוכחית. */
 .stSelectbox [data-baseweb="select"]{
-  background:var(--card) !important; color:var(--text) !important; border-radius:10px !important; border:1px solid var(--border) !important;
+  background: transparent !important;
+  color: inherit !important;
+  border-radius:10px !important;
+  border:1px solid rgba(128,128,128,.35) !important;
 }
 .stSelectbox [data-baseweb="popover"]{
-  background:var(--card) !important; color:var(--text) !important; border:1px solid var(--border) !important; border-radius:12px !important;
+  background: inherit !important;   /* יקבל רקע לפי התֵמה */
+  color: inherit !important;
+  border:1px solid rgba(128,128,128,.35) !important;
+  border-radius:12px !important;
 }
-.stSelectbox [data-baseweb="popover"] *{ color:var(--text) !important; }
-.stSelectbox [data-baseweb="option"]{ background:transparent !important; }
-.stSelectbox [data-baseweb="option"]:hover{ background:rgba(2,132,199,.10) !important; }
-.stSelectbox [data-baseweb="option"][aria-selected="true"]{
-  background:rgba(59,130,246,.18) !important; color:var(--text) !important;
+.stSelectbox [data-baseweb="option"]{ background: transparent !important; }
+@media (prefers-color-scheme: light){
+  .stSelectbox [data-baseweb="option"]:hover{ background: rgba(0,0,0,.04) !important; }
+}
+@media (prefers-color-scheme: dark){
+  .stSelectbox [data-baseweb="option"]:hover{ background: rgba(255,255,255,.06) !important; }
 }
 
-/* Radio as full-row cards */
+/* ===== Radio כ"כרטיס" – כל השורה לחיצה, בלי ריבועים בתוך ריבועים ===== */
 .stRadio div[role="radiogroup"]{ display:grid; gap:10px; margin-top:6px; }
 .stRadio div[role="radiogroup"] input[type="radio"]{ display:none !important; }
 .stRadio div[role="radiogroup"] > label{
   width:100%; display:flex; align-items:center; gap:10px; padding:12px 14px;
-  background:var(--card); color:var(--text); border:1px solid var(--border); border-radius:12px; cursor:pointer; transition:all .12s;
+  background: transparent; color: inherit;
+  border:1px solid rgba(128,128,128,.35); border-radius:12px; cursor:pointer; transition:all .12s;
 }
-.stRadio div[role="radiogroup"] > label:hover{ background:rgba(2,132,199,.06); }
-.stRadio div[role="radiogroup"] > label[aria-checked="true"]{
-  background:rgba(59,130,246,.14); border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.25);
+@media (prefers-color-scheme: light){
+  .stRadio div[role="radiogroup"] > label:hover{ background: rgba(0,0,0,.04); }
+  .stRadio div[role="radiogroup"] > label[aria-checked="true"]{
+    background: rgba(59,130,246,.14); border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.25);
+  }
+}
+@media (prefers-color-scheme: dark){
+  .stRadio div[role="radiogroup"] > label:hover{ background: rgba(255,255,255,.06); }
+  .stRadio div[role="radiogroup"] > label[aria-checked="true"]{
+    background: rgba(59,130,246,.18); border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.25);
+  }
 }
 .stRadio div[role="radiogroup"] > label span{ white-space:normal !important; line-height:1.35; }
 
-/* Desktop RTL: reverse order */
+/* ===== פריסת RTL בדסקטופ / מובייל ===== */
 @media (min-width:821px){
-  [data-testid="stHorizontalBlock"]{ flex-direction:row-reverse !important; }
+  [data-testid="stHorizontalBlock"]{ flex-direction: row-reverse !important; }
 }
-/* Mobile */
 @media (max-width:820px){
-  [data-testid="stHorizontalBlock"]{ flex-direction:column !important; gap:0 !important; }
+  [data-testid="stHorizontalBlock"]{ flex-direction: column !important; gap:0 !important; }
   [data-testid="column"]{ width:100% !important; }
   .block-container{ padding-left:8px; padding-right:8px; }
 }
+
+/* ===== להסתיר את הסיידבר של סטריםליט אם יופיע ===== */
+[data-testid='stSidebar']{ display:none; }
 </style>
 """, unsafe_allow_html=True)
-st.markdown("<style>[data-testid='stSidebar']{display:none}</style>", unsafe_allow_html=True)
+
 
 # ---------- Paths ----------
 BASE_DIR = Path(__file__).parent
@@ -334,6 +331,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.caption("נכתב עי לירן שחר • Smart Anamnesis Recommender • גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
+
 
 
 
