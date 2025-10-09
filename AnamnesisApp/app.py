@@ -12,65 +12,73 @@ st.set_page_config(
     layout="wide",
 )
 
-# ---------- Unified, mobile-first styles (RTL + cards + selectbox tweaks) ----------
+# ---------- Unified, mobile-first styles (Light/Dark + Selectbox fix + RTL) ----------
 st.markdown("""
 <style>
 :root{
-  --pri:#0f6fec; --bg:#0b1220; --card:#0f172a; --text:#e5e7eb; --muted:#94a3b8;
+  /* Light (default) */
+  --pri:#0f6fec; --bg:#ffffff; --card:#ffffff; --text:#0f172a; --muted:#475569; --border:#e5e7eb;
 }
 
-/* ===== כיוון RTL ונראות כללית ===== */
+/* Auto Dark mode */
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0b1220; --card:#0f172a; --text:#e5e7eb; --muted:#94a3b8; --border:#334155; }
+}
+
+/* RTL + base */
 html, body, .stApp{ direction: rtl; background:var(--bg) !important; color:var(--text) !important; }
 .block-container{ padding-top:12px; padding-bottom:20px; }
-h1,h2,h3,h4{ color:#ffffff !important; letter-spacing:.2px; text-align:right; }
+h1,h2,h3,h4{ color:var(--text) !important; letter-spacing:.2px; text-align:right; }
 p,li,span,label,.stMarkdown{ color:var(--text) !important; text-align:right; }
 
-/* קישורים */
-a,a:visited{ color:#9ec5ff !important; font-weight:600; text-decoration:none }
+/* Links */
+a,a:visited{ color:#2563eb !important; font-weight:600; text-decoration:none }
 a:hover{text-decoration:underline}
 
-/* כרטיסים וקו מפריד */
-.card{ background:var(--card); border:1px solid #1f2937; border-radius:14px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.25) }
-.hr{ height:1px; background:#1f2937; border:0; margin:14px 0 }
+/* Cards and divider */
+.card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.08) }
+.hr{ height:1px; background:var(--border); border:0; margin:14px 0 }
 
-/* כפתורים כלליים */
-div.stButton>button:first-child{
-  background:var(--pri); color:#fff; border:0; height:48px; border-radius:10px;
-  font-weight:600; width:100%; box-shadow:0 1px 2px rgba(15,23,42,.25)
+/* Buttons (top bar) */
+.topbar-btn button{
+  background:var(--pri) !important; color:#fff !important; border:0 !important; height:48px !important; border-radius:10px !important;
+  font-weight:600 !important; width:100% !important; box-shadow:0 1px 2px rgba(15,23,42,.15) !important;
 }
-div.stButton>button:first-child:hover{ filter:brightness(.95) }
+.topbar-btn button:hover{ filter:brightness(.95) }
 
-/* ===== Selectbox/dropdown – תאימות לנושא כהה ===== */
+/* Selectbox / dropdown – readable in light & dark */
 .stSelectbox [data-baseweb="select"]{
-  background:#111827 !important; color:#e5e7eb !important; border-radius:10px !important; border:1px solid #334155 !important;
+  background:var(--card) !important; color:var(--text) !important; border-radius:10px !important; border:1px solid var(--border) !important;
 }
 .stSelectbox [data-baseweb="popover"]{
-  background:#0b1220 !important; color:#e5e7eb !important; border:1px solid #334155 !important; border-radius:12px !important;
+  background:var(--card) !important; color:var(--text) !important; border:1px solid var(--border) !important; border-radius:12px !important;
 }
-.stSelectbox [data-baseweb="popover"] *{ color:#e5e7eb !important; }
+.stSelectbox [data-baseweb="popover"] *{ color:var(--text) !important; }
 .stSelectbox [data-baseweb="option"]{ background:transparent !important; }
-.stSelectbox [data-baseweb="option"]:hover{ background:#0f172a !important; }
-.stSelectbox [data-baseweb="option"][aria-selected="true"]{ background:#0a1f3d !important; color:#fff !important; }
+.stSelectbox [data-baseweb="option"]:hover{ background:rgba(2,132,199,.10) !important; }
+.stSelectbox [data-baseweb="option"][aria-selected="true"]{
+  background:rgba(59,130,246,.18) !important; color:var(--text) !important;
+}
 
-/* ===== Radio כ"כרטיס" – כל הרובריקה לחיצה (אם תשתמש בעתיד) ===== */
+/* Radio as full-row cards */
 .stRadio div[role="radiogroup"]{ display:grid; gap:10px; margin-top:6px; }
 .stRadio div[role="radiogroup"] input[type="radio"]{ display:none !important; }
 .stRadio div[role="radiogroup"] > label{
   width:100%; display:flex; align-items:center; gap:10px; padding:12px 14px;
-  background:#111827; color:#e5e7eb; border:1px solid #1f2937; border-radius:12px; cursor:pointer; transition:all .12s;
+  background:var(--card); color:var(--text); border:1px solid var(--border); border-radius:12px; cursor:pointer; transition:all .12s;
 }
-.stRadio div[role="radiogroup"] > label:hover{ background:#0f172a; border-color:#334155; }
+.stRadio div[role="radiogroup"] > label:hover{ background:rgba(2,132,199,.06); }
 .stRadio div[role="radiogroup"] > label[aria-checked="true"]{
-  background:#0a1f3d; border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.25); color:#fff;
+  background:rgba(59,130,246,.14); border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.25);
 }
 .stRadio div[role="radiogroup"] > label span{ white-space:normal !important; line-height:1.35; }
 
-/* היפוך סדר עמודות בדסקטופ ל־RTL */
+/* Reverse order of columns for RTL (desktop) */
 @media (min-width:821px){
   [data-testid="stHorizontalBlock"]{ flex-direction:row-reverse !important; }
 }
 
-/* מובייל */
+/* Mobile */
 @media (max-width:820px){
   [data-testid="stHorizontalBlock"]{ flex-direction:column !important; gap:0 !important; }
   [data-testid="column"]{ width:100% !important; }
@@ -79,7 +87,7 @@ div.stButton>button:first-child:hover{ filter:brightness(.95) }
 </style>
 """, unsafe_allow_html=True)
 
-# הסתרת הסיידבר לגמרי
+# Hide Streamlit’s sidebar UI if it ever appears
 st.markdown("<style>[data-testid='stSidebar']{display:none}</style>", unsafe_allow_html=True)
 
 # ---------- Paths ----------
@@ -140,21 +148,35 @@ def compose_entry(data: Dict[str, Any], system: str, complaint: str) -> Dict[str
         }
     return systems.get(system, {}).get(complaint, {})
 
+# ---------- Top bar controls (instead of sidebar) ----------
+top_left, top_right = st.columns(2)
+with top_left:
+    if st.container().button("רענון תוכן", key="refresh_btn", help="טען מחדש את קבצי ה־JSON"):
+        load_json_safe.clear()
+        st.toast("התוכן עודכן", icon="✅")
+        st.rerun()
+
+with top_right:
+    if st.container().button("איפוס מסך", key="reset_btn", help="ניקוי בחירות ואיפוס המסך"):
+        # איפוס בטוח – בלי לקרוס
+        try:
+            # Streamlit >= 1.30
+            st.query_params.clear()
+        except Exception:
+            # בגרסאות ישנות יותר
+            try:
+                st.experimental_set_query_params()
+            except Exception:
+                pass
+        try:
+            st.session_state.clear()
+        except Exception:
+            pass
+        load_json_safe.clear()
+        st.rerun()
+
 # ---------- Header ----------
 st.title("🩺 Smart Anamnesis Recommender")
-
-# כפתורי ניהול בראש הדף (במקום הסיידבר)
-top_c1, top_c2 = st.columns([1, 1])
-with top_c1:
-    if st.button("רענון תוכן"):
-        load_json_safe.clear()
-        st.experimental_rerun()
-with top_c2:
-    if st.button("איפוס מסך"):
-        st.experimental_set_query_params()
-        load_json_safe.clear()
-        st.experimental_rerun()
-
 st.markdown("<div class='hr'></div>", unsafe_allow_html=True)
 
 # ---------- Load data ----------
@@ -181,7 +203,9 @@ with sel_cols[1]:
         sys_complaints = ["אחר"] + sys_complaints
     complaint = st.selectbox("בחר תלונה", sys_complaints, index=0)
 with sel_cols[2]:
-    st.markdown(f"<span class='pill'>מערכת: {system}</span> <span class='pill'>תלונה: {complaint}</span>", unsafe_allow_html=True)
+    st.markdown(f"<span class='card' style='display:inline-block;padding:6px 10px;border-radius:999px;'>מערכת: {system}</span> "
+                f"<span class='card' style='display:inline-block;padding:6px 10px;border-radius:999px;margin-right:8px;'>תלונה: {complaint}</span>",
+                unsafe_allow_html=True)
 
 rec = compose_entry(data, system, complaint)
 merge_video_links(rec, system)
@@ -286,4 +310,4 @@ render_scores(rec.get("scores", []))
 st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
-st.caption("נכתב עי לירן שחר Smart Anamnesis Recommender - גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
+st.caption("נכתב עי לירן שחר • Smart Anamnesis Recommender • גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
