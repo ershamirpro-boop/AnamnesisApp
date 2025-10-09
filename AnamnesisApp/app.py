@@ -15,81 +15,41 @@ st.set_page_config(
 # ---------- Unified, mobile-first styles (Light/Dark + Selectbox fix + RTL) ----------
 st.markdown("""
 <style>
-/* ---------- Vars: הגדרות ברירת מחדל (Light) ---------- */
+/* ---------- Theme variables, controlled by Streamlit's data-theme ---------- */
 :root{
   --pri:#0f6fec;
-
-  /* Light palette */
-  --bg-light:#ffffff;
-  --card-light:#ffffff;
-  --text-light:#0f172a;
-  --muted-light:#475569;
-  --border-light:#e5e7eb;
-
-  /* Dark palette */
-  --bg-dark:#0b1220;
-  --card-dark:#0f172a;
-  --text-dark:#e5e7eb;
-  --muted-dark:#94a3b8;
-  --border-dark:#334155;
-
-  /* Effective (will be overridden below) */
-  --bg:var(--bg-light);
-  --card:var(--card-light);
-  --text:var(--text-light);
-  --muted:var(--muted-light);
-  --border:var(--border-light);
+  /* light defaults */
+  --bg:#ffffff; --card:#ffffff; --text:#0f172a; --muted:#475569; --border:#e5e7eb;
 }
-
-/* ---------- Sync עם theme של Streamlit (תפריט Light/Dark) ---------- */
 html[data-theme="light"], body[data-theme="light"], .stApp[data-theme="light"]{
-  --bg:var(--bg-light);
-  --card:var(--card-light);
-  --text:var(--text-light);
-  --muted:var(--muted-light);
-  --border:var(--border-light);
+  --bg:#ffffff; --card:#ffffff; --text:#0f172a; --muted:#475569; --border:#e5e7eb;
 }
 html[data-theme="dark"], body[data-theme="dark"], .stApp[data-theme="dark"]{
-  --bg:var(--bg-dark);
-  --card:var(--card-dark);
-  --text:var(--text-dark);
-  --muted:var(--muted-dark);
-  --border:var(--border-dark);
+  --bg:#0b1220; --card:#0f172a; --text:#e5e7eb; --muted:#94a3b8; --border:#334155;
 }
 
-/* ---------- Fallback: אם המשתמש לא שינה Theme אבל למערכת יש Dark ---------- */
-@media (prefers-color-scheme: dark){
-  html:not([data-theme]), body:not([data-theme]), .stApp:not([data-theme]){
-    --bg:var(--bg-dark);
-    --card:var(--card-dark);
-    --text:var(--text-dark);
-    --muted:var(--muted-dark);
-    --border:var(--border-dark);
-  }
-}
-
-/* ---------- בסיס + RTL ---------- */
+/* ---------- Base + RTL ---------- */
 html, body, .stApp{ direction: rtl; background:var(--bg) !important; color:var(--text) !important; }
 .block-container{ padding-top:12px; padding-bottom:20px; }
 h1,h2,h3,h4{ color:var(--text) !important; letter-spacing:.2px; text-align:right; }
 p,li,span,label,.stMarkdown{ color:var(--text) !important; text-align:right; }
 
-/* קישורים */
+/* Links */
 a,a:visited{ color:#2563eb !important; font-weight:600; text-decoration:none }
-a:hover{ text-decoration:underline }
+a:hover{text-decoration:underline}
 
-/* כרטיסים וקו מפריד */
+/* Cards + divider */
 .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.08) }
 .hr{ height:1px; background:var(--border); border:0; margin:14px 0 }
 
-/* כפתורים עליונים */
+/* Top buttons */
 .topbar-btn button{
   background:var(--pri) !important; color:#fff !important; border:0 !important; height:48px !important; border-radius:10px !important;
   font-weight:600 !important; width:100% !important; box-shadow:0 1px 2px rgba(15,23,42,.15) !important;
 }
 .topbar-btn button:hover{ filter:brightness(.95) }
 
-/* Selectbox / dropdown – קריא ב-Light ו-Dark */
+/* Selectbox / dropdown (works in both themes) */
 .stSelectbox [data-baseweb="select"]{
   background:var(--card) !important; color:var(--text) !important; border-radius:10px !important; border:1px solid var(--border) !important;
 }
@@ -100,10 +60,10 @@ a:hover{ text-decoration:underline }
 .stSelectbox [data-baseweb="option"]{ background:transparent !important; }
 .stSelectbox [data-baseweb="option"]:hover{ background:rgba(2,132,199,.10) !important; }
 .stSelectbox [data-baseweb="option"][aria-selected="true"]{
-  background:rgba(59,130,246,.14) !important; color:var(--text) !important;
+  background:rgba(59,130,246,.18) !important; color:var(--text) !important;
 }
 
-/* Radio ככרטיס על כל השורה */
+/* Radio as full-row cards */
 .stRadio div[role="radiogroup"]{ display:grid; gap:10px; margin-top:6px; }
 .stRadio div[role="radiogroup"] input[type="radio"]{ display:none !important; }
 .stRadio div[role="radiogroup"] > label{
@@ -116,12 +76,11 @@ a:hover{ text-decoration:underline }
 }
 .stRadio div[role="radiogroup"] > label span{ white-space:normal !important; line-height:1.35; }
 
-/* היפוך סדר עמודות (דסקטופ) */
+/* Desktop RTL: reverse order of columns */
 @media (min-width:821px){
   [data-testid="stHorizontalBlock"]{ flex-direction:row-reverse !important; }
 }
-
-/* מובייל */
+/* Mobile */
 @media (max-width:820px){
   [data-testid="stHorizontalBlock"]{ flex-direction:column !important; gap:0 !important; }
   [data-testid="column"]{ width:100% !important; }
@@ -352,6 +311,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.caption("נכתב עי לירן שחר • Smart Anamnesis Recommender • גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
+
 
 
 
