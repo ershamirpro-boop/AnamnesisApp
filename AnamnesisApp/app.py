@@ -15,52 +15,66 @@ st.set_page_config(
 # ---------- Unified, mobile-first styles (incl. Selectbox fix) ----------
 st.markdown("""
 <style>
-/* ====== Radio כ"כרטיס" – כל השורה לחיצה, בלי ריבועים בתוך ריבועים ====== */
-.stRadio div[role="radiogroup"]{
-  display:grid; gap:10px; margin-top:6px;
+:root{
+  --pri:#0f6fec; --bg:#0b1220; --card:#0f172a; --text:#e5e7eb; --muted:#94a3b8;
 }
 
-/* מסתיר את עיגול הרדיו עצמו */
-.stRadio div[role="radiogroup"] input[type="radio"]{
-  display:none !important;
-}
+/* ===== כיוון RTL ונראות כללית ===== */
+html, body, .stApp{ direction: rtl; background:var(--bg) !important; color:var(--text) !important; }
+.block-container{ padding-top:12px; padding-bottom:20px; }
+h1,h2,h3,h4{ color:#ffffff !important; letter-spacing:.2px; text-align:right; }
+p,li,span,label,.stMarkdown{ color:var(--text) !important; text-align:right; }
 
-/* הכרטיס (label) – כל השורה לחיצה */
+/* קישורים */
+a,a:visited{ color:#9ec5ff !important; font-weight:600; text-decoration:none }
+a:hover{text-decoration:underline}
+
+/* כרטיסים וקו מפריד */
+.card{ background:var(--card); border:1px solid #1f2937; border-radius:14px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.25) }
+.hr{ height:1px; background:#1f2937; border:0; margin:14px 0 }
+
+/* כפתורים */
+div.stButton>button:first-child{
+  background:var(--pri); color:#fff; border:0; height:48px; border-radius:10px;
+  font-weight:600; width:100%; box-shadow:0 1px 2px rgba(15,23,42,.25)
+}
+div.stButton>button:first-child:hover{ filter:brightness(.95) }
+
+/* ===== Selectbox/dropdown – טקסט כהה על רקע בהיר בתוך תפריט שחור של סטריםליט ===== */
+.stSelectbox [data-baseweb="select"]{
+  background:#111827 !important; color:#e5e7eb !important; border-radius:10px !important; border:1px solid #334155 !important;
+}
+.stSelectbox [data-baseweb="popover"]{
+  background:#0b1220 !important; color:#e5e7eb !important; border:1px solid #334155 !important; border-radius:12px !important;
+}
+.stSelectbox [data-baseweb="popover"] *{ color:#e5e7eb !important; }
+.stSelectbox [data-baseweb="option"]{ background:transparent !important; }
+.stSelectbox [data-baseweb="option"]:hover{ background:#0f172a !important; }
+.stSelectbox [data-baseweb="option"][aria-selected="true"]{ background:#0a1f3d !important; color:#fff !important; }
+
+/* ===== Radio כ"כרטיס" – כל הרובריקה לחיצה, בלי ריבועים בתוך ריבועים ===== */
+.stRadio div[role="radiogroup"]{ display:grid; gap:10px; margin-top:6px; }
+.stRadio div[role="radiogroup"] input[type="radio"]{ display:none !important; }
 .stRadio div[role="radiogroup"] > label{
-  width:100%;
-  display:flex; align-items:center; gap:10px;
-  padding:12px 14px;
-  background:#ffffff;
-  color:#0f172a;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-  cursor:pointer;
-  transition:all .12s ease-in-out;
+  width:100%; display:flex; align-items:center; gap:10px; padding:12px 14px;
+  background:#111827; color:#e5e7eb; border:1px solid #1f2937; border-radius:12px; cursor:pointer; transition:all .12s;
 }
-
-/* ריחוף */
-.stRadio div[role="radiogroup"] > label:hover{
-  background:#f8fafc;
-  border-color:#cbd5e1;
-}
-
-/* מצב נבחר – משתמשים ב-aria-checked שמציב סטריםליט על ה-label */
+.stRadio div[role="radiogroup"] > label:hover{ background:#0f172a; border-color:#334155; }
 .stRadio div[role="radiogroup"] > label[aria-checked="true"]{
-  background:#eef4ff;
-  border-color:#0f6fec;
-  box-shadow:0 0 0 3px rgba(15,111,236,.12);
-  color:#0b1220;
+  background:#0a1f3d; border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.25); color:#fff;
+}
+.stRadio div[role="radiogroup"] > label span{ white-space:normal !important; line-height:1.35; }
+
+/* היפוך סדר עמודות בדסקטופ ל־RTL */
+@media (min-width:821px){
+  [data-testid="stHorizontalBlock"]{ flex-direction:row-reverse !important; }
 }
 
-/* טקסט ארוך – שבירה נקייה */
-.stRadio div[role="radiogroup"] > label span{
-  white-space:normal !important;
-  line-height:1.35;
-}
-
-/* מובייל – יותר מרווח לחיצה */
+/* מובייל */
 @media (max-width:820px){
-  .stRadio div[role="radiogroup"] > label{ padding:14px 16px; }
+  [data-testid="stHorizontalBlock"]{ flex-direction:column !important; gap:0 !important; }
+  [data-testid="column"]{ width:100% !important; }
+  .block-container{ padding-left:8px; padding-right:8px; }
 }
 </style>
 """, unsafe_allow_html=True)
@@ -276,6 +290,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.caption("נכתב עי לירן שחר Smart Anamnesis Recommender - גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
+
 
 
 
