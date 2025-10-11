@@ -3,7 +3,7 @@ name: Build knowledge from Excel
 on:
   push:
     paths:
-      - 'AnamnesisApp/AnamnesisApp/PTJDV.xlsx'
+      - 'AnamnesisApp/AnamnesisApp/AAA.xlsx'
       - 'AnamnesisApp/AnamnesisApp/one_time_update.py'
   workflow_dispatch:
 
