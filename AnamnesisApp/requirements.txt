@@ -5,4 +5,5 @@ google-auth
 google-auth-oauthlib
 rapidfuzz
 phonenumbers
+openpyxl
 
