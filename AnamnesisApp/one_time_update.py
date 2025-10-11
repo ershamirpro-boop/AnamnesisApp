@@ -45,7 +45,9 @@ EXAM_LABEL_TO_URLS: Dict[str, List[str]] = {
     # לב וכלי דם / נשימה
     "האזנה ללב (קצב/אוושות)": ["https://www.youtube.com/results?search_query=cardiac+auscultation+osce"],
     "JVP ובצקות היקפיות": ["https://www.youtube.com/watch?v=Ez7KsKRi8e8"],
+    "JVP": ["https://www.youtube.com/watch?v=Ez7KsKRi8e8"],  # כינוי נוסף כדי להתאים ל-labelים קצרים
     "האזנה לריאות (קראקלס)": ["https://www.youtube.com/results?search_query=lung+auscultation+osce"],
+    "האזנה לריאות": ["https://www.youtube.com/results?search_query=lung+auscultation+osce"],  # כיסוי גם בלי "(קראקלס)"
     "סטורציה ו-RR": ["https://www.youtube.com/results?search_query=pulse+oximetry+respiratory+rate"],
     "POCUS לב/ריאות": ["https://www.youtube.com/results?search_query=lung+ultrasound+B+lines+pleural+effusion"],
     "מישוש דופן חזה": ["https://www.youtube.com/results?search_query=chest+wall+palpation+examination"],
@@ -59,6 +61,7 @@ EXAM_LABEL_TO_URLS: Dict[str, List[str]] = {
 
     # בטן
     "מישוש בטן והערכת רגישות": ["https://www.youtube.com/results?search_query=abdominal+examination+palpation+osce"],
+    "מישוש בטן": ["https://www.youtube.com/results?search_query=abdominal+examination+palpation+osce"],  # למקרה שמופיע בלי "והערכת רגישות"
     "סימני גירוי צפקי וריבאונד": ["https://www.youtube.com/results?search_query=peritoneal+signs+rebound+guarding+exam"],
     "סימן מרפי": ["https://www.youtube.com/results?search_query=Murphy+sign+examination"],
     "US בטן": ["https://www.youtube.com/results?search_query=abdominal+ultrasound+basics"],
@@ -69,10 +72,12 @@ EXAM_LABEL_TO_URLS: Dict[str, List[str]] = {
 
     # א.א.ג
     "טמפונדה קדמית אם צריך": ["https://www.youtube.com/results?search_query=anterior+nasal+packing+epistaxis"],
+    "טמפונדה קדמית": ["https://www.youtube.com/results?search_query=anterior+nasal+packing+epistaxis"],  # כיסוי בלי "אם צריך"
     "בדיקה קדמית של אף/אוזן/לוע": ["https://www.youtube.com/results?search_query=ENT+anterior+rhinoscopy+otoscopy+oropharynx+exam"],
 
     # עור
     "הערכת עור - מורפולוגיה והתפשטות": ["https://www.youtube.com/results?search_query=skin+examination+osce"],
+    "הערכת עור": ["https://www.youtube.com/results?search_query=skin+examination+osce"],  # קיצור נפוץ
     "בדיקת זיהום רקמות רכות (צלוליטיס/אבצס)": ["https://www.youtube.com/results?search_query=soft+tissue+infection+abscess+exam"],
     "בדיקה ל-DVT ברגליים": ["https://www.youtube.com/results?search_query=POCUS+DVT+compression+ultrasound"],
 
@@ -346,4 +351,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
