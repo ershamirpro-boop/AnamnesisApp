@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 import pandas as pd
 
 BASE = Path(__file__).parent
-EXCEL_PATH = BASE / "PTJVD.xlsx"     # ← ודא שהשם תואם לקובץ שהעלית
+EXCEL_PATH = BASE / "AAA.xlsx"     # ← ודא שהשם תואם לקובץ שהעלית
 KNOWLEDGE_OUT = BASE / "knowledge.json"
 VIDEO_OUT = BASE / "video_links.json"
 
@@ -351,5 +351,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
