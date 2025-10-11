@@ -2,7 +2,7 @@ from __future__ import annotations
 import json, re
 from pathlib import Path
 from typing import Dict, List, Any, Tuple
-
+import urllib.parse
 import streamlit as st
 
 # ---------- Page config ----------
@@ -220,7 +220,10 @@ def _split_clean(s: Any) -> list[str]:
 
 def _row_to_block(row: dict, cols: dict) -> dict:
     q = _split_clean(row.get(cols.get("q",""), ""))
-    pe = [{"label": x, "url": f"https://www.youtube.com/results?search_query={re.sub(r'\\s+','+',x)}"} for x in _split_clean(row.get(cols.get("pe",""), ""))]
+   pe = [
+    {"label": x, "url": "https://www.youtube.com/results?search_query=" + urllib.parse.quote_plus(x)}
+    for x in _split_clean(row.get(cols.get("pe", ""), ""))
+]
     labs = [{"test": x} for x in _split_clean(row.get(cols.get("lab",""), ""))]
     imgs = [{"modality": x, "trigger": ""} for x in _split_clean(row.get(cols.get("img",""), ""))]
     scores = [{"name": x} for x in _split_clean(row.get(cols.get("score",""), ""))]
@@ -477,3 +480,4 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.caption("נכתב ע\"י לירן שחר • Smart Anamnesis Recommender • גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
+
