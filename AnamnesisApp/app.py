@@ -1,7 +1,7 @@
 from __future__ import annotations
-import json
+import json, re
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Tuple
 
 import streamlit as st
 
@@ -15,33 +15,25 @@ st.set_page_config(
 # ---------- Unified, mobile-first styles (Light/Dark + Selectbox fix + RTL) ----------
 st.markdown("""
 <style>
-/* ===== RTL בסיסי ===== */
 .stApp { direction: rtl; }
 .block-container{ padding-top:12px; padding-bottom:20px; }
 h1,h2,h3,h4{ letter-spacing:.2px; text-align:right; }
 p,li,span,label,.stMarkdown{ text-align:right; }
-
-/* ===== קישורים ===== */
 a,a:visited{ color:inherit; text-decoration:none; font-weight:600; }
 a:hover{ text-decoration:underline; }
-
-/* ===== כרטיסים (לא נוגעים ברקע העמוד!) ===== */
 .card{
-  background: rgba(255,255,255,.84);          /* ברירת מחדל נעימה ל-Light */
+  background: rgba(255,255,255,.84);
   border: 1px solid rgba(0,0,0,.08);
   border-radius: 14px; padding: 14px 16px;
   box-shadow: 0 1px 3px rgba(0,0,0,.06);
 }
-/* Dark mode tweaks */
 @media (prefers-color-scheme: dark){
   .card{
-    background: rgba(17,24,39,.85);           /* #111827 שקוף מעט */
+    background: rgba(17,24,39,.85);
     border: 1px solid rgba(255,255,255,.12);
     box-shadow: 0 1px 3px rgba(0,0,0,.35);
   }
 }
-
-/* ===== כפתורי הפעולות למעלה (רענון/איפוס) – מראה עקבי בשני המצבים ===== */
 .topbar-btn button{
   background: #0f6fec !important;
   color:#fff !important; border:0 !important; height:48px !important;
@@ -49,9 +41,6 @@ a:hover{ text-decoration:underline; }
   box-shadow:0 1px 2px rgba(0,0,0,.15) !important;
 }
 .topbar-btn button:hover{ filter:brightness(.95); }
-
-/* ===== Selectbox / dropdown =====
-   לא כופים צבעים מוחלטים – נאחזים ב-inherit כדי לקבל את צבעי התֵמה הנוכחית. */
 .stSelectbox [data-baseweb="select"]{
   background: transparent !important;
   color: inherit !important;
@@ -59,7 +48,7 @@ a:hover{ text-decoration:underline; }
   border:1px solid rgba(128,128,128,.35) !important;
 }
 .stSelectbox [data-baseweb="popover"]{
-  background: inherit !important;   /* יקבל רקע לפי התֵמה */
+  background: inherit !important;
   color: inherit !important;
   border:1px solid rgba(128,128,128,.35) !important;
   border-radius:12px !important;
@@ -71,8 +60,6 @@ a:hover{ text-decoration:underline; }
 @media (prefers-color-scheme: dark){
   .stSelectbox [data-baseweb="option"]:hover{ background: rgba(255,255,255,.06) !important; }
 }
-
-/* ===== Radio כ"כרטיס" – כל השורה לחיצה, בלי ריבועים בתוך ריבועים ===== */
 .stRadio div[role="radiogroup"]{ display:grid; gap:10px; margin-top:6px; }
 .stRadio div[role="radiogroup"] input[type="radio"]{ display:none !important; }
 .stRadio div[role="radiogroup"] > label{
@@ -93,8 +80,6 @@ a:hover{ text-decoration:underline; }
   }
 }
 .stRadio div[role="radiogroup"] > label span{ white-space:normal !important; line-height:1.35; }
-
-/* ===== פריסת RTL בדסקטופ / מובייל ===== */
 @media (min-width:821px){
   [data-testid="stHorizontalBlock"]{ flex-direction: row-reverse !important; }
 }
@@ -103,18 +88,16 @@ a:hover{ text-decoration:underline; }
   [data-testid="column"]{ width:100% !important; }
   .block-container{ padding-left:8px; padding-right:8px; }
 }
-
-/* ===== להסתיר את הסיידבר של סטריםליט אם יופיע ===== */
 [data-testid='stSidebar']{ display:none; }
 </style>
 """, unsafe_allow_html=True)
 st.markdown("<style>[data-testid='stSidebar']{display:none}</style>", unsafe_allow_html=True)
 
-
 # ---------- Paths ----------
 BASE_DIR = Path(__file__).parent
 DATA_PATH = BASE_DIR / "knowledge.json"
 VIDEO_PATHS = [BASE_DIR / "video_links.json", BASE_DIR / "anamnesis_video_links.json"]
+EXCEL_PATH = BASE_DIR / "מעודכן.xlsx"   # טען מהקובץ הזה אם מפעילים מצב Excel
 
 # ---------- Helpers ----------
 @st.cache_data(ttl=0)
@@ -168,26 +151,18 @@ def compose_entry(data: Dict[str, Any], system: str, complaint: str) -> Dict[str
             "notes": base.get("notes", []),
         }
     return systems.get(system, {}).get(complaint, {})
+
 def validate_knowledge(data: Dict[str, Any]) -> list[str]:
-    """
-    בודקת שהמבנה של knowledge.json תקין. מחזירה רשימת בעיות (אם ריק – תקין).
-    """
     issues: list[str] = []
     if not isinstance(data, dict):
         return ["הקובץ העליון חייב להיות אובייקט JSON (dict)."]
-
-    # שדות-על אופציונליים
     if "metadata" in data and not isinstance(data["metadata"], dict):
         issues.append("'metadata' צריך להיות אובייקט (dict).")
-
-    # שדות-על נדרשים להפעלה
     for key in ("systems", "generic_by_system"):
         if key not in data:
             issues.append(f"חסר מפתח עליון '{key}'. מומלץ להוסיף: \"{key}\": {{}}")
         elif not isinstance(data[key], dict):
             issues.append(f"'{key}' חייב להיות אובייקט (dict).")
-
-    # systems[מערכת][תלונה] -> dict של רשימות
     sys_map = data.get("systems", {})
     if isinstance(sys_map, dict):
         for sys_name, comp_map in sys_map.items():
@@ -196,63 +171,122 @@ def validate_knowledge(data: Dict[str, Any]) -> list[str]:
                 continue
             for complaint, block in comp_map.items():
                 _check_block(issues, f"systems.{sys_name}.{complaint}", block)
-
-    # generic_by_system[מערכת] -> dict של רשימות
     gen_map = data.get("generic_by_system", {})
     if isinstance(gen_map, dict):
         for sys_name, block in gen_map.items():
             _check_block(issues, f"generic_by_system.{sys_name}", block)
-
     return issues
 
-
 def _check_block(issues: list[str], path: str, block: Any) -> None:
-    """בדיקת בלוק המלצות: questions / physical_exam / labs / imaging / scores / notes."""
     if not isinstance(block, dict):
         issues.append(f"'{path}' חייב להיות אובייקט (dict) של רשימות.")
         return
-
-    # כל אלה אופציונליים – אך אם קיימים חייבים להיות רשימות
     for fld in ("questions", "physical_exam", "labs", "imaging", "scores", "notes"):
         if fld in block and not isinstance(block[fld], list):
             issues.append(f"'{path}.{fld}' חייב להיות רשימה (list).")
-
-    # תכולה פנימית מומלצת
     if isinstance(block.get("physical_exam"), list):
         for i, it in enumerate(block["physical_exam"]):
             if not (isinstance(it, dict) and "label" in it):
                 issues.append(f"'{path}.physical_exam[{i}]' חייב להיות dict עם 'label' (ו-'url' אופציונלי).")
-
     if isinstance(block.get("labs"), list):
         for i, it in enumerate(block["labs"]):
             if not (isinstance(it, dict) and "test" in it):
                 issues.append(f"'{path}.labs[{i}]' חייב להיות dict עם 'test' (+ 'why'/'when' אופציונליים).")
-
     if isinstance(block.get("imaging"), list):
         for i, it in enumerate(block["imaging"]):
             if not (isinstance(it, dict) and "modality" in it):
                 issues.append(f"'{path}.imaging[{i}]' חייב להיות dict עם 'modality' (+ 'trigger' אופציונלי).")
-
     if isinstance(block.get("scores"), list):
         for i, it in enumerate(block["scores"]):
             if not isinstance(it, dict) or "name" not in it:
                 issues.append(f"'{path}.scores[{i}]' מומלץ להיות dict עם 'name' (+ 'about'/'rule_in'/'rule_out'/'ref' אופציונליים).")
+
+# ---------- Excel runtime builder (optional) ----------
+try:
+    import pandas as pd
+except Exception:
+    pd = None  # אם חסר, נשתמש רק ב-JSON
+
+def _split_clean(s: Any) -> list[str]:
+    if not isinstance(s, str) or not s.strip():
+        return []
+    parts = re.split(r"[\n\r;•·\u2022,]+|\s*[-–—]+\s*", s)
+    out: list[str] = []
+    for p in parts:
+        p = p.strip(" \t:.;-–—")
+        if p and p not in out:
+            out.append(p)
+    return out
+
+def _row_to_block(row: dict, cols: dict) -> dict:
+    q = _split_clean(row.get(cols.get("q",""), ""))
+    pe = [{"label": x, "url": f"https://www.youtube.com/results?search_query={re.sub(r'\\s+','+',x)}"} for x in _split_clean(row.get(cols.get("pe",""), ""))]
+    labs = [{"test": x} for x in _split_clean(row.get(cols.get("lab",""), ""))]
+    imgs = [{"modality": x, "trigger": ""} for x in _split_clean(row.get(cols.get("img",""), ""))]
+    scores = [{"name": x} for x in _split_clean(row.get(cols.get("score",""), ""))]
+    notes = _split_clean(row.get(cols.get("note",""), ""))
+    diffs = _split_clean(row.get(cols.get("diff",""), ""))
+    if diffs:
+        notes.append("אבחנה מבדלת: " + "; ".join(diffs))
+    return {
+        "questions": q, "physical_exam": pe, "labs": labs,
+        "imaging": imgs, "scores": scores, "notes": notes
+    }
+
+def build_from_excel(path: Path) -> Dict[str, Any]:
+    df = pd.read_excel(path)
+    df.columns = [str(c).strip() for c in df.columns]
+    aliases = {
+        "system": ["מערכת","System"],
+        "complaint": ["תלונה","Complaint","Chief complaint"],
+        "q": ["שאלות לשאול","Questions","מה לשאול"],
+        "pe": ["מה צריך לבדוק","בדיקה גופנית","Physical exam","מה לבדוק"],
+        "lab": ["מעבדה","Laboratory","Labs"],
+        "img": ["דימות","הדמיה","Imaging","צילום/CT/MRI"],
+        "score": ["SCORES","Scores","סקורים"],
+        "note": ["המלצות","Notes","הערות"],
+        "diff": ["אבחנה מבדלת","Differential","Dx diff"]
+    }
+    def pick(name):
+        for a in aliases[name]:
+            if a in df.columns: return a
+        return None
+    cols = {k: pick(k) for k in aliases}
+    for k in ("system","complaint"):
+        if not cols[k]:
+            raise ValueError(f"עמודה חובה חסרה בגליון: {k}")
+
+    systems_map: dict = {}
+    for _, r in df.iterrows():
+        sys = str(r.get(cols["system"], "")).strip()
+        comp = str(r.get(cols["complaint"], "")).strip()
+        if not sys or not comp:
+            continue
+        systems_map.setdefault(sys, {})
+        systems_map[sys][comp] = _row_to_block(r, cols)
+
+    knowledge = {
+        "metadata": {"version": "1.0.0", "language": "he", "notes": "נטען ישירות מ-Excel בזמן ריצה"},
+        "generic_by_system": {},   # לא נוגעים בג׳נרי כאן
+        "systems": systems_map,
+    }
+    return knowledge
+
 # ---------- Top bar controls (instead of sidebar) ----------
-top_left, top_right = st.columns(2)
+top_left, top_mid, top_right = st.columns([1,1,1])
 with top_left:
     if st.container().button("רענון תוכן", key="refresh_btn", help="טען מחדש את קבצי ה־JSON"):
         load_json_safe.clear()
         st.toast("התוכן עודכן", icon="✅")
         st.rerun()
+with top_mid:
+    use_excel = st.toggle("לטעון מ־Excel", value=False, help="טען את 'מעודכן.xlsx' במקום knowledge.json (לבדיקה מהירה)")
 
 with top_right:
     if st.container().button("איפוס מסך", key="reset_btn", help="ניקוי בחירות ואיפוס המסך"):
-        # איפוס בטוח – בלי לקרוס
         try:
-            # Streamlit >= 1.30
             st.query_params.clear()
         except Exception:
-            # בגרסאות ישנות יותר
             try:
                 st.experimental_set_query_params()
             except Exception:
@@ -269,26 +303,40 @@ st.title("🩺 Smart Anamnesis Recommender")
 st.markdown("<div class='hr'></div>", unsafe_allow_html=True)
 
 # ---------- Load data ----------
-if not DATA_PATH.exists():
-    st.error("לא נמצא knowledge.json בתיקייה של האפליקציה. העלה את הקובץ לאותה תיקייה שבה app.py נמצא.")
-    st.stop()
+data: Dict[str, Any] = {}
 
-data = load_json_safe(DATA_PATH)
+if use_excel:
+    if pd is None:
+        st.warning("pandas לא מותקן. ודא שהוספת pandas ו-openpyxl ל-requirements.txt", icon="⚠️")
+    elif not EXCEL_PATH.exists():
+        st.error(f"לא נמצא קובץ אקסל: {EXCEL_PATH.name}. העלה אותו לתיקייה AnamnesisApp.")
+    else:
+        try:
+            data = build_from_excel(EXCEL_PATH)
+            st.success("✅ נטען מאקסל לזמן הריצה הנוכחי.", icon="✅")
+        except Exception as e:
+            st.error(f"שגיאה בטעינת Excel: {e}")
+
 if not data:
-    st.stop()
+    if not DATA_PATH.exists():
+        st.error("לא נמצא knowledge.json בתיקייה של האפליקציה. העלה את הקובץ לאותה תיקייה שבה app.py נמצא.")
+        st.stop()
+    data = load_json_safe(DATA_PATH)
+    if not data:
+        st.stop()
 
 issues = validate_knowledge(data)
 if issues:
     with st.expander("⚠️ נמצאו הערות/בעיות במבנה הקובץ (לחץ להצגה)"):
         for i, msg in enumerate(issues, start=1):
             st.markdown(f"{i}. {msg}")
-# ===== הדבק כאן את בלוק "מבט מהיר על הידע" =====
+
+# ===== Quick view =====
 with st.expander("📚 מבט מהיר על הידע (מערכות ותלונות)"):
     sys_map = data.get("systems", {})
     gen_map = data.get("generic_by_system", {})
     total_systems = len(set(sys_map.keys()) | set(gen_map.keys()))
     st.caption(f"נמצאו {total_systems} מערכות | {sum(len(v) for v in sys_map.values())} תלונות ספציפיות | {len(gen_map)} מערכות עם 'אחר' כללי")
-
     for sys_name in sorted(set(sys_map.keys()) | set(gen_map.keys())):
         complaints = sorted(list(sys_map.get(sys_name, {}).keys()))
         st.markdown(f"#### • {sys_name}")
@@ -300,11 +348,11 @@ with st.expander("📚 מבט מהיר על הידע (מערכות ותלונו�
         if sys_name in gen_map:
             st.caption("כולל בלוק כללי ('אחר') למערכת זו.")
     st.divider()
-   
+
 # ---------- System and complaint selection ----------
 systems = sorted(set(list(data.get("systems", {}).keys()) + list(data.get("generic_by_system", {}).keys())))
 if not systems:
-    st.error("קובץ הנתונים ריק - מלא את knowledge.json לפי המבנה שהוגדר.")
+    st.error("קובץ הנתונים ריק - מלא את knowledge.json או את מעודכן.xlsx לפי המבנה שהוגדר.")
     st.stop()
 
 sel_cols = st.columns([1, 1, 2])
@@ -316,14 +364,12 @@ with sel_cols[1]:
         sys_complaints = ["אחר"] + sys_complaints
     complaint = st.selectbox("בחר תלונה", sys_complaints, index=0)
 with sel_cols[2]:
-    st.markdown(f"<span class='card' style='display:inline-block;padding:6px 10px;border-radius:999px;'>מערכת: {system}</span> "
-                f"<span class='card' style='display:inline-block;padding:6px 10px;border-radius:999px;margin-right:8px;'>תלונה: {complaint}</span>",
-                unsafe_allow_html=True)
+    st.markdown(
+        f"<span class='card' style='display:inline-block;padding:6px 10px;border-radius:999px;'>מערכת: {system}</span> "
+        f"<span class='card' style='display:inline-block;padding:6px 10px;border-radius:999px;margin-right:8px;'>תלונה: {complaint}</span>",
+        unsafe_allow_html=True
+    )
 
-rec = compose_entry(data, system, complaint)
-merge_video_links(rec, system)
-
-# ---------- Sections ----------
 def render_questions(qs: List[str]) -> None:
     st.markdown("### אנמנזה - שאלות לשאול")
     box = st.container()
@@ -390,6 +436,13 @@ def render_scores(scores: Any) -> None:
                 st.caption(f"ⓘ רפרנס: {ref}")
             st.markdown("")
 
+def compose_and_merge(data: Dict[str, Any], system: str, complaint: str) -> Dict[str, Any]:
+    rec = compose_entry(data, system, complaint)
+    merge_video_links(rec, system)
+    return rec
+
+rec = compose_and_merge(data, system, complaint)
+
 # ---------- Render ----------
 st.markdown("<div class='card'>", unsafe_allow_html=True)
 render_questions(rec.get("questions", []))
@@ -423,15 +476,4 @@ render_scores(rec.get("scores", []))
 st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Footer ----------
-st.caption("נכתב עי לירן שחר • Smart Anamnesis Recommender • גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
-
-
-
-
-
-
-
-
-
-
-
+st.caption("נכתב ע\"י לירן שחר • Smart Anamnesis Recommender • גרסה קלינית ראשונה. אין שמירת היסטוריה בין סשנים.")
