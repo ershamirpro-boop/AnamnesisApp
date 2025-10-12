@@ -422,7 +422,7 @@ COMPLAINTS: Dict[str, Dict[str, Any]] = {
         "questions": ["שימוש לאחרונה/תרופות זמינות", "אלכוהול/סמים נוספים"],
         "physical_exam": [{"label":"סטורציה ו-RR,בדיקת אישונים"}],
         "labs": [],
-        ,"imaging": [IMG("ECG/")]
+        "imaging": [IMG("ECG/")],
         "notes": ["נלוקסון לפי צורך, ניטור נשימתי"]
     },
     "מכת חום": {
@@ -523,6 +523,7 @@ if open_all or sel == "—":
 
 st.markdown("<br>", unsafe_allow_html=True)
 st.caption("Smart Anamnesis • התוכן להכוונה קלינית בלבד ואינו מחליף שיקול דעת רפואי.נכבת עי לירן שחר")
+
 
 
 
