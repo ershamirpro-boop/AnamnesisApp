@@ -6,4 +6,6 @@ google-auth-oauthlib
 rapidfuzz
 phonenumbers
 openpyxl
+streamlit-autorefresh
+
 
