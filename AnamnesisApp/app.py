@@ -1,12 +1,13 @@
 from __future__ import annotations
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Tuple
 from urllib.parse import quote_plus
-from pathlib import Path
 from datetime import datetime
+from difflib import SequenceMatcher
+import unicodedata
 import streamlit as st
 
 # ========================= Page config + RTL =========================
-st.set_page_config(page_title="Smart Anamnesis • תלונות", page_icon="🩺", layout="wide")
+st.set_page_config(page_title="Smart Anamnesis", page_icon="🩺", layout="wide")
 st.markdown("""
 <style>
 .stApp{direction:rtl}
@@ -89,8 +90,7 @@ def attach_video_links(block: Dict[str, Any]) -> None:
                        ["https://www.youtube.com/results?search_query=" + quote_plus(label)])[0]
                 it["url"] = url
 
-# ========================= תוכן תלונות (ללא חלוקה למערכות) =========================
-# אפשר להרחיב חופשי באותו פורמט. שמתי כאן סל רחב ונקי תחבירית.
+# ========================= תוכן תלונות (מהקובץ ששלחת) =========================
 COMPLAINTS: Dict[str, Dict[str, Any]] = {
     # --- לב וכלי דם ---
     "כאב בחזה": {
@@ -217,7 +217,7 @@ COMPLAINTS: Dict[str, Dict[str, Any]] = {
         "questions": ["טריגר/אלרגנים/חשיפה", "שימוש במשאפים לאחרונה וכמות", "אשפוזים/אינטובציה בעבר"],
         "physical_exam": [{"label":"סטורציה ו-RR"},{"label":"האזנה - צפצופים/קראקלס"}],
         "labs": [L("ABG/VBG","חמצון/אוורור","מצוקה נשימתית")],
-        "imaging": [IMG("צילום חזה","אם חשד לאטלקטזיס/פנאומוניה")],
+        "imaging": [IMG("צילום חזה","אם יש חשד לאטלקטזיס/פנאומוניה")],
         "scores": []
     },
     "COPD – החמרה": {
@@ -395,18 +395,48 @@ COMPLAINTS: Dict[str, Dict[str, Any]] = {
     },
 }
 
-# צרף קישורי וידאו אוטומטית לכל תלונה
+# צרף קישורי וידאו אוטומטית
 for blk in COMPLAINTS.values():
     attach_video_links(blk)
 
-# ========================= UI — שורה אחת בלבד =========================
-st.title("🩺 Smart Anamnesis – תלונות (ללא חלוקה למערכות)")
+# ========================= חיפוש “קומבו” בשורה אחת =========================
+st.title("🩺 Smart Anamnesis")
 st.caption(f"סה\"כ תלונות מוגדרות: {len(COMPLAINTS)}")
 st.markdown("<div class='hr'></div>", unsafe_allow_html=True)
 
-names = sorted(COMPLAINTS.keys())
-sel = st.selectbox("בחר תלונה להצגה", options=["— בחר תלונה —"] + names, index=0, key="complaint_select")
+def _norm(s: str) -> str:
+    s = unicodedata.normalize("NFKC", (s or "")).strip()
+    return " ".join(s.split())
 
+def _score(q: str, name: str) -> float:
+    qn, nn = _norm(q), _norm(name)
+    if not qn:
+        return 0.0
+    if nn.startswith(qn):
+        return 1.2
+    if qn in nn:
+        return 1.0
+    return 0.6 * SequenceMatcher(None, qn, nn).ratio()
+
+all_names = sorted(COMPLAINTS.keys())
+c0, c1 = st.columns([2, 2])
+with c0:
+    q = st.text_input("הקלד תלונה", placeholder="כאב חזה, סחרחורת, UTI, כוויות...").strip()
+
+matches: List[Tuple[str, float]] = []
+if q:
+    matches = sorted(((n, _score(q, n)) for n in all_names), key=lambda x: x[1], reverse=True)
+    matches = [(n, s) for n, s in matches if s >= 0.45][:10]
+suggestions = [n for n, _ in matches] if q else all_names
+
+with c1:
+    if q and not suggestions:
+        st.selectbox("לא נמצאה תלונה מתאימה", options=["—"], index=0, disabled=True, key="no_match")
+        sel = None
+    else:
+        sel = st.selectbox("בחר תלונה", options=["— בחר תלונה —"] + suggestions, index=0, key="sel")
+
+# ========================= רנדר =========================
 def render_questions(qs: List[str]) -> None:
     st.markdown("#### אנמנזה - מה לשאול")
     if not qs:
@@ -485,8 +515,7 @@ def render_block_plain(blk: Dict[str,Any]) -> None:
         render_scores(blk.get("scores", []))
         st.markdown("</div>", unsafe_allow_html=True)
 
-# הצגה
-if sel in COMPLAINTS:
+if sel and sel in COMPLAINTS:
     st.markdown(f"### {sel}")
     render_block_plain(COMPLAINTS[sel])
 
