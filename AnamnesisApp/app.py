@@ -397,7 +397,7 @@ COMPLAINTS: Dict[str, Dict[str, Any]] = {
     "כאב צוואר": {
         "questions": ["טראומה/הקרנה ליד/נוירו"],
         "physical_exam": [{"label":"בדיקה נוירולוגית ממוקדת"}],
-        "labs": []
+        "labs": [],
         "imaging": [IMG("CT/XRAY","עמוד שדרה צווארי")]
     },
     "כאב מפרק חד": {
@@ -523,6 +523,7 @@ if open_all or sel == "—":
 
 st.markdown("<br>", unsafe_allow_html=True)
 st.caption("Smart Anamnesis • התוכן להכוונה קלינית בלבד ואינו מחליף שיקול דעת רפואי.נכבת עי לירן שחר")
+
 
 
 
