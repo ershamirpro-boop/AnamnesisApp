@@ -17,6 +17,14 @@ p,li,span,label,.stMarkdown{text-align:right}
 [data-testid='stSidebar']{display:none}
 </style>
 """, unsafe_allow_html=True)
+from datetime import datetime
+try:
+    from streamlit_autorefresh import st_autorefresh
+    st_autorefresh(interval=5 * 60 * 1000, limit=None, key="keepalive_5m")
+    st.caption(f"⏱ רענון אחרון: {datetime.now().strftime('%H:%M:%S')}")
+except Exception:
+    # אם החבילה לא מותקנת – לא נקרוס
+    pass
 
 # ========================= עזרי יצירה מקוצרים =========================
 def L(test: str, why: str = "", when: str = "") -> Dict[str, str]:
@@ -515,3 +523,4 @@ if open_all or sel == "—":
 
 st.markdown("<br>", unsafe_allow_html=True)
 st.caption("Smart Anamnesis • התוכן להכוונה קלינית בלבד ואינו מחליף שיקול דעת רפואי.נכבת עי לירן שחר")
+
