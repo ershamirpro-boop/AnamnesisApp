@@ -1,9 +1,7 @@
 from __future__ import annotations
-from typing import Dict, List, Any, Tuple
+from typing import Dict, List, Any
 from urllib.parse import quote_plus
 from datetime import datetime
-from difflib import SequenceMatcher
-import unicodedata
 import streamlit as st
 
 # ========================= Page config + RTL =========================
@@ -90,7 +88,7 @@ def attach_video_links(block: Dict[str, Any]) -> None:
                        ["https://www.youtube.com/results?search_query=" + quote_plus(label)])[0]
                 it["url"] = url
 
-# ========================= תוכן תלונות (מהקובץ ששלחת) =========================
+# ========================= תוכן תלונות =========================
 COMPLAINTS: Dict[str, Dict[str, Any]] = {
     # --- לב וכלי דם ---
     "כאב בחזה": {
@@ -395,46 +393,22 @@ COMPLAINTS: Dict[str, Dict[str, Any]] = {
     },
 }
 
-# צרף קישורי וידאו אוטומטית
+# קישורי וידאו אוטומטיים
 for blk in COMPLAINTS.values():
     attach_video_links(blk)
 
-# ========================= חיפוש “קומבו” בשורה אחת =========================
+# ========================= UI — שדה יחיד עם סינון בהקלדה =========================
 st.title("🩺 Smart Anamnesis")
 st.caption(f"סה\"כ תלונות מוגדרות: {len(COMPLAINTS)}")
 st.markdown("<div class='hr'></div>", unsafe_allow_html=True)
 
-def _norm(s: str) -> str:
-    s = unicodedata.normalize("NFKC", (s or "")).strip()
-    return " ".join(s.split())
-
-def _score(q: str, name: str) -> float:
-    qn, nn = _norm(q), _norm(name)
-    if not qn:
-        return 0.0
-    if nn.startswith(qn):
-        return 1.2
-    if qn in nn:
-        return 1.0
-    return 0.6 * SequenceMatcher(None, qn, nn).ratio()
-
 all_names = sorted(COMPLAINTS.keys())
-c0, c1 = st.columns([2, 2])
-with c0:
-    q = st.text_input("הקלד תלונה", placeholder="כאב חזה, סחרחורת, UTI, כוויות...").strip()
-
-matches: List[Tuple[str, float]] = []
-if q:
-    matches = sorted(((n, _score(q, n)) for n in all_names), key=lambda x: x[1], reverse=True)
-    matches = [(n, s) for n, s in matches if s >= 0.45][:10]
-suggestions = [n for n, _ in matches] if q else all_names
-
-with c1:
-    if q and not suggestions:
-        st.selectbox("לא נמצאה תלונה מתאימה", options=["—"], index=0, disabled=True, key="no_match")
-        sel = None
-    else:
-        sel = st.selectbox("בחר תלונה", options=["— בחר תלונה —"] + suggestions, index=0, key="sel")
+sel = st.selectbox(
+    "בחר תלונה",
+    options=["— בחר תלונה —"] + all_names,
+    index=0,
+    help="ניתן להתחיל להקליד כדי לסנן את הרשימה. אם אין התאמות Streamlit מציג שאין אפשרויות."
+)
 
 # ========================= רנדר =========================
 def render_questions(qs: List[str]) -> None:
